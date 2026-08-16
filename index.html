@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070D0B">
+<link rel="manifest" href="manifest.webmanifest">
+<title>حسابي Pro — نظام إدارة الأعمال الذكي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #070D0B;
+  --card: #0F1A16;
+  --card-glow: #162B22;
+  --txt: #E6F4ED;
+  --mut: #8FA89B;
+  --line: #1F382E;
+  --p: #10B981;
+  --p2: #059669;
+  --accent: #34D399;
+  --good: #34D399;
+  --bad: #F87171;
+  --warn: #FBBF24;
+  --r: 20px;
+  --sh: 0 12px 40px rgba(0,0,0,0.5);
+}
+[data-theme="light"]{
+  --bg: #F0F4F2;
+  --card: #FFFFFF;
+  --card-glow: #F9FCFB;
+  --txt: #111E19;
+  --mut: #687D74;
+  --line: #D3E2DC;
+  --p: #0D9488;
+  --p2: #0F766E;
+  --accent: #14B8A6;
+  --good: #059669;
+  --bad: #DC2626;
+  --warn: #D97706;
+  --sh: 0 10px 30px rgba(13,148,136,0.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:'Readex Pro','Cairo',sans-serif;transition:background 0.3s, color 0.3s}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;transition:all 0.2s ease}
+
+.app{display:flex;max-width:1480px;margin:auto;min-height:100vh}
+.side{width:270px;background:var(--card);border-left:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow: var(--sh)}
+.brand{display:flex;gap:12px;align-items:center;padding:4px 9px 26px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.logo{width:46px;height:46px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-radius:14px;display:grid;place-items:center;font-weight:900;font-size:22px;box-shadow:0 4px 15px rgba(16,185,129,0.3)}
+.brand b{font-size:21px;letter-spacing:-0.5px}
+.brand small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+
+.nav{display:grid;gap:6px;flex:1;overflow-y:auto}
+.nav button,.bottom button{border:0;background:none;color:var(--mut);text-align:right;padding:12px 14px;border-radius:14px;display:flex;gap:12px;align-items:center;font-weight:500;font-size:13px}
+.nav button.active,.nav button:hover{background:var(--card-glow);color:var(--accent);font-weight:700;border:1px solid var(--line)}
+.ico{width:24px;text-align:center;font-size:16px}
+.sidebox{margin-top:16px;background:var(--card-glow);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:12px;line-height:1.6;color:var(--mut)}
+
+.main{flex:1;min-width:0;padding:32px;animation: fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.mobile{display:none}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}
+.top h1{font-size:28px;margin:0;font-weight:700;letter-spacing:-0.5px}
+.top p{color:var(--mut);font-size:13px;margin:6px 0 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.btn{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:14px;padding:11px 18px;font-weight:600;font-size:13px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.btn:hover{border-color:var(--accent);transform: translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-color:transparent;box-shadow:0 4px 15px rgba(16,185,129,0.25)}
+.btn.danger{background:var(--bad);color:#fff;border-color:transparent}
+.btn.soft{background:var(--card-glow);color:var(--accent);border:1px solid var(--line)}
+
+.page{display:none}
+.page.active{display:block}
+.grid{display:grid;gap:16px}
+.stats{grid-template-columns:repeat(5,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.stat .lab{font-size:12px;color:var(--mut);font-weight:500}
+.stat .val{font-size:26px;font-weight:900;margin-top:8px;letter-spacing:-0.5px}
+.sub{font-size:12px;color:var(--mut);margin-top:6px}
+.good{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+.two{grid-template-columns:1.3fr .7fr}.three{grid-template-columns:repeat(3,1fr)}
+.section{margin-top:20px}
+.section h2{font-size:17px;margin:0 0 12px;font-weight:700}
+.quick{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.quick button{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:right;color:var(--txt);box-shadow:var(--sh)}
+.quick button:hover{border-color:var(--accent);background:var(--card-glow)}
+.quick span{font-size:24px}
+.quick b{display:block;margin-top:8px;font-size:13px}
+
+.table-wrap{overflow:auto}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th,.table td{padding:14px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.table th{color:var(--mut);font-weight:600;font-size:12px}
+.empty{text-align:center;padding:35px;color:var(--mut)}
+.pill{display:inline-block;padding:5px 10px;border-radius:99px;background:var(--card-glow);border:1px solid var(--line);color:var(--accent);font-size:11px;font-weight:700}
+.pill.warn{background:rgba(251,191,36,0.1);color:var(--warn);border-color:rgba(251,191,36,0.2)}
+.pill.bad{background:rgba(248,113,113,0.1);color:var(--bad);border-color:rgba(248,113,113,0.2)}
+
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.input{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);color:var(--txt);outline:0;width:100%;font-size:13px}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(16,185,129,0.15)}
+.search{flex:1;min-width:200px}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field label{display:block;color:var(--mut);font-size:12px;margin-bottom:6px;font-weight:500}
+.full{grid-column:1/-1}
+
+.modalbg{position:fixed;inset:0;background:rgba(3,7,6,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+.modalbg.show{display:flex}
+.modal{width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 25px 50px rgba(0,0,0,0.5);animation: scaleIn 0.3s ease}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.mh h3{margin:0;font-size:20px}
+.close{border:1px solid var(--line);background:var(--card-glow);color:var(--txt);width:36px;height:36px;border-radius:12px;font-size:16px}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.kpi{font-size:32px;font-weight:900}
+.bar{height:10px;background:var(--card-glow);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--accent));border-radius:99px}
+.chart{display:flex;gap:8px;align-items:end;height:160px;padding:10px 0 0}
+.col{flex:1;display:flex;flex-direction:column;justify-content:end;gap:6px;text-align:center;font-size:10px;color:var(--mut)}
+.col i{display:block;background:linear-gradient(180deg,var(--accent),var(--p));border-radius:8px 8px 0 0;min-height:6px}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);opacity:0;background:var(--card);border:1px solid var(--accent);color:var(--txt);padding:12px 22px;border-radius:16px;z-index:200;transition:0.3s;font-size:13px;box-shadow:var(--sh);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.bottom{display:none}
+
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.quick{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:850px){
+.side{display:none}.main{padding:16px 16px 90px}
+.mobile{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;background:var(--card);padding:12px 16px;border:1px solid var(--line);border-radius:16px}
+.top{display:block}.top .actions{margin-top:12px}
+.stats{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}
+.bottom{display:grid;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);grid-template-columns:repeat(5,1fr);z-index:50;padding:8px 6px env(safe-area-inset-bottom);backdrop-filter:blur(10px)}
+.bottom button{display:block;text-align:center;font-size:10px;padding:6px;color:var(--mut)}
+.bottom button.active{color:var(--accent)}
+.bottom .ico{display:block;margin:auto;font-size:18px}
+.quick{grid-template-columns:repeat(2,1fr)}
+}
+
+.catalog-list{max-height:48vh;overflow:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px}.catalog-tools{display:flex;justify-content:space-between;padding:10px;position:sticky;top:0;background:var(--card);z-index:2}.catalog-item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);cursor:pointer}.catalog-item:hover{background:rgba(255,255,255,.03)}.catalog-item small{display:block;color:var(--muted);margin-top:3px}.catalog-item strong{white-space:nowrap}.catalog-head .card{margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="brand"><div class="logo">ح</div><div><b>حسابي Pro</b><small>إدارة الأعمال الذكية</small></div></div>
+<nav class="nav">
+<button class="active" data-page="dashboard"><span class="ico">⚡</span> الرئيسية</button>
+<button data-page="sales"><span class="ico">🧾</span> المبيعات</button>
+<button data-page="purchases"><span class="ico">🛒</span> المشتريات</button>
+<button data-page="inventory"><span class="ico">📦</span> المخزون والأصناف</button>
+<button data-page="customers"><span class="ico">👥</span> العملاء</button>
+<button data-page="suppliers"><span class="ico">🏭</span> الموردون</button>
+<button data-page="expenses"><span class="ico">💸</span> المصروفات</button>
+<button data-page="reports"><span class="ico">📊</span> التقارير</button>
+<button data-page="audit"><span class="ico">📝</span> سجل العمليات</button>
+<button data-page="settings"><span class="ico">⚙️</span> الإعدادات</button>
+<button data-page="more"><span class="ico">✨</span> أدوات إضافية</button>
+</nav>
+<div class="sidebox">🔒 <b>النظام المحلي الآمن</b><br>تعمل البيانات بالكامل بدون إنترنت.<br><span id="net" style="color:var(--good)">● متصل وجاهز</span></div>
+</aside>
+
+<main class="main">
+<div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">حسابي Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+<div class="top"><div><h1>أهلًا بك، المالك 👋</h1><p id="greeting">ملخص نشاط متجرك ووحدات المخزون الفورية</p></div><div class="actions"><button class="btn soft" onclick="openPOS()">⚡ نقطة البيع السريعة</button><button class="btn primary" onclick="openSale()">+ بيع جديد</button><button class="btn" onclick="openPurchase()">+ شراء بضاعة</button></div></div>
+<div class="grid stats">
+<div class="card stat"><div class="lab">مبيعات اليوم</div><div class="val" id="dSales">₪ 0</div><div class="sub" id="dSalesN">0 عملية بيع</div></div>
+<div class="card stat"><div class="lab">صافي أرباح اليوم</div><div class="val good" id="dNet">₪ 0</div><div class="sub">بعد خصم المصاريف</div></div>
+<div class="card stat"><div class="lab">ديون العملاء</div><div class="val bad" id="dDebt">₪ 0</div><div class="sub">مبالغ مستحقة للتحصيل</div></div>
+<div class="card stat"><div class="lab">قيمة المخزون</div><div class="val" id="dStock">₪ 0</div><div class="sub" id="dProducts">0 صنف مسجل</div></div>
+<div class="card stat"><div class="lab">أرباح تقديرية</div><div class="val good" id="dProfit">₪ 0</div><div class="sub">من إجمالي المبيعات</div></div>
+</div>
+<div class="section"><h2>اختصارات سريعة</h2><div class="quick">
+<button onclick="openSale()"><span>🧾</span><b>بيع جديد</b></button>
+<button onclick="openPurchase()"><span>🛒</span><b>شراء بضاعة</b></button>
+<button onclick="openProduct()"><span>📦</span><b>إضافة صنف/وحدة</b></button>
+<button onclick="openCustomer()"><span>👤</span><b>إضافة عميل</b></button>
+<button onclick="openPayment()"><span>💳</span><b>تسجيل دفعة</b></button>
+<button onclick="openExpense()"><span>💸</span><b>تسجيل مصروف</b></button>
+</div></div>
+<div class="section grid two"><div class="card"><div class="top" style="margin:0"><h2>آخر العمليات</h2><button class="btn soft" onclick="go('sales')">عرض الكل</button></div><div id="recent"></div></div><div class="card"><h2>تنبيهات انفاد المخزون</h2><div id="low"></div></div></div>
+</section>
+
+<!-- SALES -->
+<section id="sales" class="page"><div class="top"><div><h1>المبيعات والفواتير</h1><p>إدارة فواتير البيع النقدية وبالدين مع دعم الوحدات المتعددة</p></div><div class="actions"><button class="btn" onclick="exportCSV('sales')">تصدير CSV</button><button class="btn primary" onclick="openSale()">+ بيع جديد</button></div></div>
+<div class="toolbar"><input id="sq" class="input search" placeholder="بحث برقم الفاتورة أو اسم العميل..." oninput="renderSales()"><select id="saleFilter" class="input" style="max-width:180px" onchange="renderSales()"><option value="">كل العمليات</option><option>نقدي</option><option>دين</option></select></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>الفاتورة</th><th>العميل</th><th>التاريخ</th><th>النوع</th><th>الإجمالي</th><th>الربح</th><th>الإجراءات</th></tr></thead><tbody id="salesT"></tbody></table></div></section>
+
+<!-- PURCHASES -->
+<section id="purchases" class="page"><div class="top"><div><h1>المشتريات والموردين</h1><p>إدخال الشحنات وتحديث كميات الوحدات في المخزون تلقائياً</p></div><button class="btn primary" onclick="openPurchase()">+ شراء جديد</button></div>
+<div class="toolbar"><input id="pq" class="input search" placeholder="بحث في المشتريات..." oninput="renderPurchases()"></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>الفاتورة</th><th>المورد</th><th>التاريخ</th><th>النوع</th><th>الإجمالي</th><th>الإجراءات</th></tr></thead><tbody id="purchasesT"></tbody></table></div></section>
+
+<!-- INVENTORY -->
+<section id="inventory" class="page"><div class="top"><div><h1>المخزون والأصناف (بالحبة، العلبه، الكيلو، اللتر...)</h1><p>إدارة المنتجات وتحديد الوحدات الرئيسية والفرعية وأسعارها بدقة</p></div><div class="actions"><button class="btn" onclick="inventoryAdjust()">تسوية جرد</button><button class="btn" onclick="openGazaCatalog()">🇵🇸 كتالوج غزة</button><button class="btn primary" onclick="openProduct()">+ صنف جديد</button></div></div>
+<div class="toolbar"><input id="iq" class="input search" placeholder="بحث باسم الصنف، الباركود، أو التصنيف الرئيسي/الفرعي..." oninput="renderInventory()"><button class="btn" onclick="scanBarcode()">📷 باركود</button></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>الصنف</th><th>التصنيف الرئيسي / الفرعي</th><th>الوحدة</th><th>الكمية</th><th>شراء</th><th>بيع</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inventoryT"></tbody></table></div></section>
+
+<!-- CUSTOMERS -->
+<section id="customers" class="page"><div class="top"><div><h1>العملاء وديونهم</h1><p>متابعة أرصدة العملاء وكشوفات الحساب والدفعات</p></div><button class="btn primary" onclick="openCustomer()">+ عميل جديد</button></div>
+<div class="toolbar"><input id="cq" class="input search" placeholder="بحث بالاسم أو الهاتف..." oninput="renderCustomers()"></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>العميل</th><th>الهاتف</th><th>الرصيد الحالي</th><th>آخر حركة</th><th>الإجراءات</th></tr></thead><tbody id="customersT"></tbody></table></div></section>
+
+<!-- SUPPLIERS -->
+<section id="suppliers" class="page"><div class="top"><div><h1>الموردون</h1><p>إدارة الموردين والأرصدة المستحقة لهم</p></div><button class="btn primary" onclick="openSupplier()">+ مورد جديد</button></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>المورد</th><th>الهاتف</th><th>الرصيد المستحق</th><th>ملاحظات</th><th>الإجراءات</th></tr></thead><tbody id="suppliersT"></tbody></table></div></section>
+
+<!-- EXPENSES -->
+<section id="expenses" class="page"><div class="top"><div><h1>المصروفات التشغيلية</h1><p>تسجيل ومتابعة مصروفات المتجر والإيجارات والمصاريف النثرية</p></div><button class="btn primary" onclick="openExpense()">+ مصروف جديد</button></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>البيان</th><th>التصنيف</th><th>التاريخ</th><th>المبلغ</th></tr></thead><tbody id="expensesT"></tbody></table></div></section>
+
+<!-- REPORTS -->
+<section id="reports" class="page"><div class="top"><div><h1>التقارير المالية والتحليلات</h1><p>مراقبة المبيعات، الأرباح، وحركة المخزون الشاملة</p></div></div>
+<div class="toolbar"><select id="period" class="input" style="max-width:210px" onchange="renderReports()"><option value="all">كل الفترات</option><option value="month">هذا الشهر</option><option value="week">هذا الأسبوع</option><option value="today">اليوم</option></select></div>
+<div class="grid three"><div class="card"><div class="sub">إجمالي المبيعات</div><div class="kpi" id="rSales">₪ 0</div></div><div class="card"><div class="sub">إجمالي المشتريات</div><div class="kpi" id="rPur">₪ 0</div></div><div class="card"><div class="sub">إجمالي المصروفات</div><div class="kpi" id="rExp">₪ 0</div></div></div>
+<div class="section grid two"><div class="card"><h2>مبيعات آخر 7 أيام</h2><div id="chart" class="chart"></div></div><div class="card"><h2>ملخص صافي الأرباح</h2><div class="row"><span>إيراد المبيعات الكلي</span><b id="rr1">₪0</b></div><div class="row"><span>تكلفة البضاعة المباعة</span><b id="rr2">₪0</b></div><div class="row"><span>المصروفات التشغيلية</span><b id="rr3">₪0</b></div><div class="row"><strong>صافي الربح النهائي</strong><strong class="good" id="rr4">₪0</strong></div></div></div>
+<div class="section card"><h2>الأصناف الأكثر مبيعاً</h2><div id="topProducts"></div></div></section>
+
+<!-- AUDIT -->
+<section id="audit" class="page"><div class="top"><div><h1>سجل العمليات والرقابة</h1><p>سجل تفصيلي لحركات المستخدمين والنظام بدقة</p></div><button class="btn danger" onclick="clearAudit()">مسح السجل</button></div><div class="card table-wrap"><table class="table"><thead><tr><th>الوقت</th><th>المستخدم</th><th>العملية</th><th>التفاصيل</th></tr></thead><tbody id="auditT"></tbody></table></div></section>
+
+<!-- SETTINGS -->
+<section id="settings" class="page"><div class="top"><div><h1>إعدادات النظام</h1><p>تخصيص بيانات المتجر، المظهر البصري، والنسخ الاحتياطي</p></div></div>
+<div class="card"><h2>بيانات المتجر والعملة</h2><div class="form">
+<div class="field"><label>اسم المتجر</label><input id="sb" class="input"></div>
+<div class="field"><label>اسم المالك</label><input id="so" class="input"></div>
+<div class="field"><label>العملة</label><select id="sc" class="input"><option>₪</option><option>$</option><option>JD</option><option>€</option></select></div>
+<div class="field"><label>حد التنبيه للمخزون</label><input id="sl" type="number" class="input"></div>
+<div class="field"><label>المظهر البصري</label><select id="themeSelect" class="input" onchange="setTheme(this.value)"><option value="dark">داكن (Dark Obsidian)</option><option value="light">فاتح (Clean Light)</option></select></div>
+</div><div class="modal-actions"><button class="btn primary" onclick="saveSettings()">حفظ التعديلات</button></div></div>
+<div class="section card"><h2>النسخ الاحتياطي وإدارة البيانات</h2><p class="sub">تصدير أو استيراد قاعدة البيانات بالكامل بصيغة JSON لضمان الأمان الكامل.</p><div class="actions" style="margin-top:12px"><button class="btn" onclick="backup()">⬇ تصدير نسخة احتياطية</button><label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="restore(event)"></label><button class="btn danger" onclick="resetData()">حذف وتصفير البيانات</button></div></div>
+</section>
+
+<!-- MORE -->
+<section id="more" class="page"><div class="top"><div><h1>أدوات متقدمة</h1><p>حاسبة الأسعار، إدارة المهام، وقيمة المخزون الإجمالية</p></div></div>
+<div class="grid three">
+<div class="card"><h2>📱 مشاركة آخر فاتورة</h2><p class="sub">مشاركة تفاصيل الفاتورة الأخيرة عبر تطبيقات التواصل أو نسخها.</p><button class="btn primary" style="margin-top:12px" onclick="shareLastInvoice()">مشاركة الفاتورة</button></div>
+<div class="card"><h2>🔔 مركز التنبيهات</h2><div id="alertsMore" style="margin-top:10px"></div></div>
+<div class="card"><h2>🧮 حاسبة هامش الربح</h2><div class="form" style="margin-top:10px"><div class="field"><label>التكلفة</label><input id="calcCost" class="input" type="number" value="0"></div><div class="field"><label>هامش الربح %</label><input id="calcMargin" class="input" type="number" value="20"></div></div><div class="modal-actions"><button class="btn primary" onclick="calcPrice()">احسب السعر</button><b id="calcResult" style="align-self:center"></b></div></div>
+</div>
+<div class="section grid two">
+<div class="card"><h2>📦 تقييم المخزون الشامل</h2><div class="row"><span>إجمالي قيمة الشراء</span><b id="stockBuyValue">₪0</b></div><div class="row"><span>إجمالي قيمة البيع</span><b id="stockSellValue">₪0</b></div><div class="row"><span>الأرباح المحتملة للمخزون</span><b class="good" id="stockPotential">₪0</b></div></div>
+<div class="card"><h2>📋 مهام المتجر</h2><div id="tasks" style="margin-top:10px"></div><button class="btn soft" style="margin-top:12px" onclick="addTask()">+ إضافة مهمة</button></div>
+</div>
+</section>
+</main></div>
+
+<nav class="bottom">
+<button class="active" data-page="dashboard"><span class="ico">⚡</span><small>الرئيسية</small></button>
+<button data-page="sales"><span class="ico">🧾</span><small>المبيعات</small></button>
+<button data-page="inventory"><span class="ico">📦</span><small>المخزون</small></button>
+<button data-page="customers"><span class="ico">👥</span><small>العملاء</small></button>
+<button data-page="settings"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+</nav>
+
+<div id="mb" class="modalbg"><div class="modal"><div class="mh"><h3 id="mt">إضافة</h3><button class="close" onclick="closeModal()">✕</button></div><div id="mc"></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='hesabi_pro_v3_units';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ settings:{business:'متجري الرئيسي',owner:'المالك',currency:'₪',low:5,theme:'dark'},
+ products:[],customers:[],suppliers:[],sales:[],purchases:[],expenses:[],payments:[],audit:[],tasks:[],
+ users:[{id:'u1',name:'المالك',role:'مدير'}]
+};
+const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
+db.products=db.products.map(normalizeProduct);
+const cur=()=>db.settings.currency||'₪';
+const money=n=>cur()+' '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const today=()=>new Date().toISOString().slice(0,10);
+const fmt=d=>d?new Date(d+'T00:00:00').toLocaleDateString('ar-PS',{year:'numeric',month:'short',day:'numeric'}):'-';
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+function log(action,detail){db.audit.unshift({id:uid('a'),time:new Date().toISOString(),user:db.users[0]?.name||'المالك',action,detail});db.audit=db.audit.slice(0,500)}
+function toast(x){let t=document.getElementById('toast');t.textContent=x;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function go(p){
+ document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));
+ document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
+ renderAll();window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>go(x.dataset.page));
+function openModal(t,c){document.getElementById('mt').textContent=t;document.getElementById('mc').innerHTML=c;document.getElementById('mb').classList.add('show')}
+function closeModal(){document.getElementById('mb').classList.remove('show')}
+
+function setTheme(v){
+ db.settings.theme=v;
+ document.body.setAttribute('data-theme', v);
+ save();
+}
+
+function renderAll(){
+ document.getElementById('greeting').textContent=db.settings.business+' — إبقاء المخزون والأصناف تحت السيطرة';
+ document.getElementById('mobileBusiness').textContent=db.settings.business;
+ renderDash();renderSales();renderPurchases();renderInventory();renderCustomers();
+ renderSuppliers();renderExpenses();renderReports();renderAudit();
+ loadSettings();
+ setTheme(db.settings.theme||'dark');
+ renderMore();
+}
+
+function renderDash(){
+ let td=db.sales.filter(x=>x.date===today()),s=td.reduce((a,x)=>a+x.total,0),exp=db.expenses.filter(x=>x.date===today()).reduce((a,x)=>a+x.amount,0);
+ let debt=db.customers.reduce((a,x)=>a+Math.max(0,x.balance),0),stock=db.products.reduce((a,x)=>a+x.qty*x.sell,0),profit=td.reduce((a,x)=>a+x.profit,0)-exp;
+ dSales.textContent=money(s);dSalesN.textContent=td.length+' عملية بيع';dNet.textContent=money(s-exp);dDebt.textContent=money(debt);dStock.textContent=money(stock);dProducts.textContent=db.products.length+' صنف';dProfit.textContent=money(profit);
+ let arr=[...db.sales.map(x=>({...x,k:'بيع',a:x.total})),...db.purchases.map(x=>({...x,k:'شراء',a:x.total})),...db.expenses.map(x=>({...x,k:'مصروف',a:x.amount}))].sort((a,b)=>(b.created||b.date).localeCompare(a.created||a.date)).slice(0,6);
+ recent.innerHTML=arr.length?arr.map(x=>`<div class="row"><div><b>${esc(x.k)}</b><div class="sub">${esc(x.customerName||x.supplier||x.name||'')}</div></div><strong class="${x.k==='بيع'?'good':'bad'}">${x.k==='بيع'?'+':'-'} ${money(x.a)}</strong></div>`).join(''):'<div class="empty">لا توجد عمليات مسجلة حديثاً</div>';
+ let low=db.products.filter(p=>p.qty<=Number(p.low||db.settings.low)).sort((a,b)=>a.qty-b.qty).slice(0,6);
+ document.getElementById('low').innerHTML=low.length?low.map(p=>`<div class="row"><b>${esc(p.name)} (${esc(p.unit||'حبة')})</b><span class="pill ${p.qty===0?'bad':'warn'}">${p.qty===0?'نفد تماماً':'متبقي '+p.qty}</span></div>`).join(''):'<div class="empty">المخزون بحالة ممتازة وفوق حد التنبيه 🎉</div>'
+}
+
+function renderSales(){
+ let q=(sq?.value||'').toLowerCase(),f=saleFilter?.value||'';
+ let a=db.sales.filter(x=>(x.code+x.customerName+x.type).toLowerCase().includes(q)&&(f?!0&&x.type===f:1)).sort((x,y)=>y.date.localeCompare(x.date));
+ salesT.innerHTML=a.length?a.map(x=>`<tr><td><b>${x.code}</b></td><td>${esc(x.customerName||'نقدي')}</td><td>${fmt(x.date)}</td><td><span class="pill">${x.type}</span></td><td class="good">${money(x.total)}</td><td class="good">${money(x.profit)}</td><td><button class="btn" onclick="viewInvoice('${x.id}')">🖨 معاينة</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">لا توجد مبيعات مطابقة</td></tr>'
+}
+
+function renderPurchases(){
+ let q=(pq?.value||'').toLowerCase();
+ let a=db.purchases.filter(x=>(x.code+x.supplier).toLowerCase().includes(q)).sort((x,y)=>y.date.localeCompare(x.date));
+ purchasesT.innerHTML=a.length?a.map(x=>`<tr><td>${x.code}</td><td>${esc(x.supplier||'-')}</td><td>${fmt(x.date)}</td><td>${x.type}</td><td>${money(x.total)}</td><td><button class="btn" onclick="viewPurchase('${x.id}')">🖨 معاينة</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">لا توجد مشتريات مسجلة</td></tr>'
+}
+
+function renderInventory(){
+ let q=(iq?.value||'').toLowerCase();
+ let a=db.products.filter(p=>(p.name+p.sku+p.barcode+p.cat+p.subcat+p.unit).toLowerCase().includes(q));
+ inventoryT.innerHTML=a.length?a.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.cat||'عام')} / ${esc(p.subcat||'فرعي')}</td><td><span class="pill">${esc(p.unit||'حبة')}</span>${p.packSize>1?` <small>↔ ${esc(p.packUnit)} × ${p.packSize}</small>`:''}</td><td><b>${p.qty}</b> ${esc(p.unit||'حبة')} ${p.packSize>1?`<small>(${(p.qty/p.packSize).toFixed(2)} ${esc(p.packUnit)})</small>`:''}</td><td>${money(p.buy)}<small>${p.packSize>1?` / ${money(p.packBuy)} ${esc(p.packUnit)}`:''}</small></td><td>${money(p.sell)}<small>${p.packSize>1?` / ${money(p.packSell)} ${esc(p.packUnit)}`:''}</small></td><td><span class="pill ${p.qty===0?'bad':p.qty<=p.low?'warn':''}">${p.qty===0?'نفد':p.qty<=p.low?'منخفض':'متوفر'}</span></td><td><button class="btn" onclick="openProduct(db.products.find(x=>x.id==='${p.id}'))">تعديل</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">لا توجد أصناف مطابقة</td></tr>'
+}
+
+function renderCustomers(){
+ let q=(cq?.value||'').toLowerCase();
+ let a=db.customers.filter(x=>(x.name+x.phone).toLowerCase().includes(q));
+ customersT.innerHTML=a.length?a.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone||'-')}</td><td class="${c.balance>0?'bad':'good'}">${money(c.balance)}</td><td>${fmt(c.last)}</td><td><button class="btn" onclick="customerStatement('${c.id}')">كشف حساب</button> <button class="btn primary" onclick="openPayment('${c.id}')">تسجيل دفعة</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">لا يوجد عملاء مسجلون</td></tr>'
+}
+
+function renderSuppliers(){
+ suppliersT.innerHTML=db.suppliers.length?db.suppliers.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.phone||'-')}</td><td class="${s.balance>0?'bad':'good'}">${money(s.balance)}</td><td>${esc(s.note||'')}</td><td><button class="btn" onclick="openSupplier(db.suppliers.find(x=>x.id==='${s.id}'))">تعديل</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">لا يوجد موردون مسجلون</td></tr>'
+}
+
+function renderExpenses(){
+ let a=[...db.expenses].sort((x,y)=>y.date.localeCompare(x.date));
+ expensesT.innerHTML=a.length?a.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.cat)}</td><td>${fmt(x.date)}</td><td class="bad">- ${money(x.amount)}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">لا توجد مصروفات مسجلة</td></tr>'
+}
+
+function rangeOK(date,period){
+ let d=new Date(date+'T00:00:00'),n=new Date();
+ if(period==='all')return true;
+ if(period==='today')return date===today();
+ if(period==='month')return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+ let diff=(n-d)/86400000;return diff>=0&&diff<7;
+}
+
+function renderReports(){
+ let per=period?.value||'all',s=db.sales.filter(x=>rangeOK(x.date,per)),p=db.purchases.filter(x=>rangeOK(x.date,per)),e=db.expenses.filter(x=>rangeOK(x.date,per));
+ let sv=s.reduce((a,x)=>a+x.total,0),pv=p.reduce((a,x)=>a+x.total,0),ev=e.reduce((a,x)=>a+x.amount,0),pr=s.reduce((a,x)=>a+x.profit,0)-ev;
+ rSales.textContent=money(sv);rPur.textContent=money(pv);rExp.textContent=money(ev);
+ rr1.textContent=money(sv);rr2.textContent=money(sv-s.reduce((a,x)=>a+x.profit,0));rr3.textContent=money(ev);rr4.textContent=money(pr);
+ let days=[];for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let ds=d.toISOString().slice(0,10),v=db.sales.filter(x=>x.date===ds).reduce((a,x)=>a+x.total,0);days.push({ds,v})}
+ let mx=Math.max(1,...days.map(x=>x.v));
+ chart.innerHTML=days.map(x=>`<div class="col"><i style="height:${Math.max(6,x.v/mx*120)}px"></i><span>${x.ds.slice(5)}</span></div>`).join('');
+ let m={};s.forEach(x=>x.items?.forEach(i=>m[i.name]=(m[i.name]||0)+i.qty));
+ let top=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,7),max=top[0]?.[1]||1;
+ topProducts.innerHTML=top.length?top.map(x=>`<div style="margin:12px 0"><div style="display:flex;justify-content:space-between"><b>${esc(x[0])}</b><span>${x[1]} وحدة</span></div><div class="bar" style="margin-top:6px"><i style="width:${x[1]/max*100}%"></i></div></div>`).join(''):'<div class="empty">لا توجد بيانات مبيعات كافية للتحليل</div>'
+}
+
+function renderAudit(){
+ auditT.innerHTML=db.audit.length?db.audit.slice(0,200).map(a=>`<tr><td>${new Date(a.time).toLocaleString('ar-PS')}</td><td>${esc(a.user)}</td><td>${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">السجل فارغ تماماً</td></tr>'
+}
+
+function loadSettings(){
+ sb.value=db.settings.business;so.value=db.settings.owner;sc.value=db.settings.currency;sl.value=db.settings.low;themeSelect.value=db.settings.theme||'dark';
+}
+
+function saveSettings(){
+ db.settings={...db.settings,business:sb.value||'متجري',owner:so.value,currency:sc.value,low:Number(sl.value)||5,theme:themeSelect.value};
+ log('تعديل الإعدادات','تحديث إعدادات المتجر والعملة');save();renderAll();toast('تم حفظ الإعدادات بنجاح');
+}
+
+function normalizeProduct(p){
+ p={id:'',name:'',sku:'',barcode:'',cat:'',subcat:'',unit:'حبة',qty:0,buy:0,sell:0,low:db.settings.low,packUnit:'كرتونة',packSize:1,packBuy:0,packSell:0,...p};
+ if(!p.packSize || p.packSize<1)p.packSize=1;
+ if(!p.packBuy)p.packBuy=Number(p.buy||0)*Number(p.packSize||1);
+ if(!p.packSell)p.packSell=Number(p.sell||0)*Number(p.packSize||1);
+ return p;
+}
+function productDisplay(p){p=normalizeProduct(p);return p.packSize>1?`${p.name} — ${p.unit} / ${p.packUnit} (${p.packSize} ${p.unit})`:p.name+' — '+p.unit}
+function openProduct(p={}){
+ p=normalizeProduct(p);
+ openModal(p.id?'تعديل صنف':'إضافة صنف جديد',`<div class="form">
+ <div class="field full"><label>اسم الصنف</label><input id="pn" class="input" value="${esc(p.name)}"></div>
+ <div class="field"><label>التصنيف الرئيسي</label><select id="pcat" class="input">${['مواد غذائية','مشروبات','شوكولاتة وحلويات','ألبان وأجبان','معلبات','بقوليات وأرز','مخبوزات','مجمدات','منظفات','عناية شخصية','أطفال','أدوات منزلية','قرطاسية','أخرى'].map(x=>`<option ${p.cat===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>التصنيف الفرعي</label><input id="psub" class="input" value="${esc(p.subcat)}"></div>
+ <div class="field"><label>وحدة البيع الأساسية</label><select id="punit" class="input">${['حبة','علبة','كيلو','لتر','درزن','متر','كيس','باكيت','ربطة','عبوة'].map(x=>`<option ${p.unit===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>الوحدة الكبيرة / الكرتونة</label><select id="ppackunit" class="input">${['كرتونة','علبة','باكيت','درزن','كيس','ربطة','جالون'].map(x=>`<option ${p.packUnit===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>عدد الوحدات داخل الكبيرة</label><input id="ppacksize" type="number" min="1" step="1" class="input" value="${p.packSize}"></div>
+ <div class="field"><label>المخزون الحالي (بالوحدة الأساسية)</label><input id="pq2" type="number" step="any" class="input" value="${p.qty}"></div>
+ <div class="field"><label>شراء — بالوحدة الأساسية</label><input id="pbu" type="number" step="any" class="input" value="${p.buy}"></div>
+ <div class="field"><label>بيع — بالوحدة الأساسية</label><input id="psell" type="number" step="any" class="input" value="${p.sell}"></div>
+ <div class="field"><label>شراء — ${p.packUnit}</label><input id="ppbuy" type="number" step="any" class="input" value="${p.packBuy}"></div>
+ <div class="field"><label>بيع — ${p.packUnit}</label><input id="ppsell" type="number" step="any" class="input" value="${p.packSell}"></div>
+ <div class="field"><label>حد التنبيه</label><input id="pl" type="number" step="any" class="input" value="${p.low}"></div>
+ <div class="field"><label>الباركود أو الكود</label><input id="pb" class="input" value="${esc(p.barcode)}"></div>
+ </div><div class="hint">مثال: شكلاطة، الوحدة الأساسية = حبة، الوحدة الكبيرة = كرتونة، داخل الكرتونة = 24 حبة. البيع بالحبة يخصم 1، والبيع بالكرتونة يخصم 24.</div><div class="modal-actions"><button class="btn primary" onclick="saveProduct('${p.id}')">حفظ الصنف</button></div>`);
+}
+function saveProduct(id){
+ let packSize=Math.max(1,Number(ppacksize.value)||1),buy=Number(pbu.value)||0,sell=Number(psell.value)||0;
+ let p={id:id||uid('p'),name:pn.value.trim(),cat:pcat.value.trim(),subcat:psub.value.trim(),unit:punit.value,packUnit:ppackunit.value,packSize,packBuy:Number(ppbuy.value)||buy*packSize,packSell:Number(ppsell.value)||sell*packSize,barcode:pb.value.trim(),qty:Number(pq2.value)||0,buy,sell,low:Number(pl.value)||5};
+ if(!p.name)return toast('يرجى إدخال اسم الصنف');
+ let i=db.products.findIndex(x=>x.id===p.id);
+ i>=0?db.products[i]=p:db.products.push(p);
+ log(i>=0?'تعديل صنف':'إضافة صنف',p.name+' ('+p.unit+' / '+p.packUnit+')');save();closeModal();renderAll();toast('تم حفظ الصنف بنجاح');
+}
+
+function openSale(){
+ openModal('إنشاء فاتورة بيع جديدة',`<div id="lines"></div><button class="btn soft" onclick="addLine()">+ إضافة صنف للفاتورة</button>
+ <div class="form" style="margin-top:14px">
+ <div class="field"><label>العميل</label><select id="scus" class="input"><option value="">نقدي (بدون عميل محدد)</option>${db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} — رصيد ${money(c.balance)}</option>`).join('')}</select></div>
+ <div class="field"><label>طريقة الدفع</label><select id="stype" class="input"><option>نقدي</option><option>دين</option></select></div>
+ <div class="field"><label>خصم إضافي</label><input id="disc" type="number" class="input" value="0" oninput="calcSale()"></div>
+ <div class="field"><label>ملاحظات</label><input id="snote" class="input"></div>
+ </div><div class="card" style="margin-top:14px"><b>الإجمالي النهائي: <span id="stotal" class="good">${money(0)}</span></b></div>
+ <div class="modal-actions"><button class="btn primary" onclick="saveSale()">حفظ واعتماد الفاتورة</button></div>`);
+ addLine();
+}
+
+function addLine(){
+ let d=document.createElement('div');d.className='form';d.style.marginBottom='10px';
+ let opts=db.products.map(p=>{p=normalizeProduct(p);return `<option value="${p.id}">${esc(productDisplay(p))} — حبة: ${money(p.sell)}${p.packSize>1?' | '+p.packUnit+': '+money(p.packSell):''} (متوفر: ${p.qty} ${p.unit})</option>`}).join('');
+ d.innerHTML=`<div class="field"><label>الصنف</label><select class="input lp" onchange="updateSaleUnit(this);calcSale()">${opts}</select></div><div class="field"><label>وحدة البيع</label><select class="input lu" onchange="calcSale()"><option value="base">الوحدة الأساسية</option><option value="pack">الوحدة الكبيرة</option></select></div><div class="field"><label>الكمية</label><input class="input lq" type="number" min="0.01" step="any" value="1" oninput="calcSale()"></div><div class="sub lineHint"></div>`;
+ lines.appendChild(d);updateSaleUnit(d.querySelector('.lp'));calcSale();
+}
+function updateSaleUnit(sel){
+ let row=sel.closest('.form'),p=normalizeProduct(db.products.find(a=>a.id===sel.value));
+ let u=row.querySelector('.lu');u.innerHTML=p.packSize>1?`<option value="base">${p.unit} — ${money(p.sell)}</option><option value="pack">${p.packUnit} (${p.packSize} ${p.unit}) — ${money(p.packSell)}</option>`:`<option value="base">${p.unit} — ${money(p.sell)}</option>`;
+ row.querySelector('.lineHint').textContent=p.packSize>1?`المتوفر: ${p.qty} ${p.unit} = ${(p.qty/p.packSize).toFixed(2)} ${p.packUnit}`:'';
+}
+function saleLineValues(row){
+ let p=normalizeProduct(db.products.find(a=>a.id===row.querySelector('.lp').value)),q=Number(row.querySelector('.lq').value)||0,mode=row.querySelector('.lu').value;
+ let factor=mode==='pack'?p.packSize:1,price=mode==='pack'?p.packSell:p.sell,buy=mode==='pack'?p.packBuy:p.buy;
+ return {p,q,baseQty:q*factor,price,buy,mode};
+}
+
+function calcSale(){
+ let total=0;
+ document.querySelectorAll('#lines .form').forEach(x=>{let v=saleLineValues(x);total+=v.price*v.q;});
+ let dis=Number(disc?.value)||0;stotal.textContent=money(Math.max(0,total-dis));
+}
+function saveSale(){
+ let items=[],ok=true;
+ document.querySelectorAll('#lines .form').forEach(x=>{let v=saleLineValues(x);if(v.p&&v.q){if(v.baseQty>v.p.qty)ok=false;items.push({productId:v.p.id,name:v.p.name+' ('+(v.mode==='pack'?v.p.packUnit:v.p.unit)+')',qty:v.q,baseQty:v.baseQty,unit:v.mode==='pack'?v.p.packUnit:v.p.unit,price:v.price,buy:v.buy});}});
+ if(!items.length)return toast('أضف صنفاً واحداً على الأقل');if(!ok)return toast('الكمية المطلوبة تتجاوز المخزون المتاح');
+ let gross=items.reduce((a,x)=>a+x.qty*x.price,0),discount=Number(disc.value)||0,total=Math.max(0,gross-discount),cost=items.reduce((a,x)=>a+x.baseQty*x.buy,0),profit=total-cost;
+ let c=db.customers.find(x=>x.id===scus.value),type=stype.value;items.forEach(i=>{let p=db.products.find(p=>p.id===i.productId);p.qty-=i.baseQty;});
+ if(c&&type==='دين'){c.balance+=total;c.last=today()}
+ let x={id:uid('s'),code:'INV-'+String(db.sales.length+1).padStart(5,'0'),date:today(),created:new Date().toISOString(),customerId:c?.id||'',customerName:c?.name||'نقدي',type,total,discount,profit,cost,items,note:snote.value};
+ db.sales.push(x);log('بيع',x.code+' — '+money(total));save();closeModal();renderAll();toast('تم حفظ الفاتورة بنجاح');setTimeout(()=>viewInvoice(x.id),150);
+}
+
+function openPurchase(){
+ openModal('فاتورة شراء بضاعة',`<div class="form">
+ <div class="field"><label>المورد</label><select id="psup" class="input"><option value="">مورد غير محدد</option>${db.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
+ <div class="field"><label>طريقة الدفع</label><select id="ptype" class="input"><option>نقدي</option><option>دين</option></select></div>
+ </div><div id="plines" style="margin-top:14px"></div><button class="btn soft" onclick="addPurchaseLine()">+ إضافة صنف للشراء</button>
+ <div class="card" style="margin-top:14px">إجمالي الشراء: <b id="ptotal" class="good">${money(0)}</b></div>
+ <div class="modal-actions"><button class="btn primary" onclick="savePurchase()">حفظ وتحديث المخزون</button></div>`);
+ addPurchaseLine();
+}
+
+function addPurchaseLine(){
+ let d=document.createElement('div');d.className='form';d.style.marginBottom='10px';
+ let opts=db.products.map(p=>{p=normalizeProduct(p);return `<option value="${p.id}">${esc(productDisplay(p))}</option>`}).join('');
+ d.innerHTML=`<div class="field"><label>الصنف</label><select class="input pp" onchange="updatePurchaseUnit(this)">${opts}</select></div><div class="field"><label>وحدة الشراء</label><select class="input pu" onchange="updatePurchasePrice(this)"><option value="base">الوحدة الأساسية</option><option value="pack">الوحدة الكبيرة</option></select></div><div class="field"><label>الكمية وسعر الوحدة</label><div style="display:flex;gap:6px"><input class="input pqty" type="number" min="0.01" step="any" value="1" oninput="calcPurchase()"><input class="input pprice" type="number" step="any" value="0" oninput="calcPurchase()"></div></div>`;
+ plines.appendChild(d);updatePurchaseUnit(d.querySelector('.pp'));calcPurchase();
+}
+function updatePurchaseUnit(sel){
+ let row=sel.closest('.form'),p=normalizeProduct(db.products.find(a=>a.id===sel.value)),u=row.querySelector('.pu');u.innerHTML=p.packSize>1?`<option value="base">${p.unit}</option><option value="pack">${p.packUnit} (${p.packSize} ${p.unit})</option>`:`<option value="base">${p.unit}</option>`;
+ row.querySelector('.pprice').value=u.value==='pack'?p.packBuy:p.buy;
+}
+function updatePurchasePrice(sel){let row=sel.closest('.form'),p=normalizeProduct(db.products.find(a=>a.id===row.querySelector('.pp').value));row.querySelector('.pprice').value=sel.value==='pack'?p.packBuy:p.buy;}
+function purchaseLineValues(row){let p=normalizeProduct(db.products.find(a=>a.id===row.querySelector('.pp').value)),q=Number(row.querySelector('.pqty').value)||0,mode=row.querySelector('.pu').value,factor=mode==='pack'?p.packSize:1,pr=Number(row.querySelector('.pprice').value)||0;return {p,q,baseQty:q*factor,pr,mode};}
+function calcPurchase(){let t=0;document.querySelectorAll('#plines .form').forEach(x=>{let v=purchaseLineValues(x);t+=v.q*v.pr;});ptotal.textContent=money(t);}
+function savePurchase(){
+ let items=[],total=0;document.querySelectorAll('#plines .form').forEach(x=>{let v=purchaseLineValues(x);if(v.p&&v.q){v.p.qty+=v.baseQty;if(v.mode==='base')v.p.buy=v.pr;else v.p.packBuy=v.pr;v.p.sell=v.p.packSize>1?(v.p.packSell/v.p.packSize):v.p.sell;items.push({productId:v.p.id,name:v.p.name+' ('+(v.mode==='pack'?v.p.packUnit:v.p.unit)+')',qty:v.q,baseQty:v.baseQty,unit:v.mode==='pack'?v.p.packUnit:v.p.unit,price:v.pr});total+=v.q*v.pr;}});
+ if(!items.length||total<=0)return toast('أدخل الأصناف والكميات والأسعار بشكل صحيح');let s=db.suppliers.find(x=>x.id===psup.value),x={id:uid('pu'),code:'PUR-'+String(db.purchases.length+1).padStart(5,'0'),date:today(),supplier:s?.name||'مورد',supplierId:s?.id||'',type:ptype.value,total,items};if(s&&x.type==='دين')s.balance+=total;db.purchases.push(x);log('شراء',x.code+' — '+money(total));save();closeModal();renderAll();toast('تم تسجيل الشراء وتحديث المخزون بنجاح');
+}
+
+const GAZA_CATALOG=[["لوح شوكولاتة بالحليب","شوكولاتة","شوكولاتة وحلويات","حبة",1.0,1.2,24,"كرتونة"],["لوح شوكولاتة داكنة","شوكولاتة","شوكولاتة وحلويات","حبة",1.2,1.5,24,"كرتونة"],["لوح شوكولاتة بالبندق","شوكولاتة","شوكولاتة وحلويات","حبة",1.4,1.8,24,"كرتونة"],["لوح شوكولاتة بالكراميل","شوكولاتة","شوكولاتة وحلويات","حبة",1.7,2.1,24,"كرتونة"],["شوكولاتة محشوة","شوكولاتة","شوكولاتة وحلويات","حبة",1.8,2.3,24,"كرتونة"],["شوكولاتة بيضاء","شوكولاتة","شوكولاتة وحلويات","حبة",2.1,2.6,24,"كرتونة"],["شوكولاتة أصابع","شوكولاتة","شوكولاتة وحلويات","حبة",2.3,2.9,24,"كرتونة"],["شوكولاتة صغيرة","شوكولاتة","شوكولاتة وحلويات","حبة",2.6,3.2,24,"كرتونة"],["شوكولاتة عائلية","شوكولاتة","شوكولاتة وحلويات","حبة",1.0,1.2,24,"كرتونة"],["ويفر شوكولاتة","شوكولاتة","شوكولاتة وحلويات","حبة",1.2,1.5,24,"كرتونة"],["ويفر بندق","شوكولاتة","شوكولاتة وحلويات","حبة",1.4,1.8,24,"كرتونة"],["بسكويت شوكولاتة","شوكولاتة","شوكولاتة وحلويات","حبة",1.7,2.1,24,"كرتونة"],["بسكويت محشو","شوكولاتة","شوكولاتة وحلويات","حبة",1.8,2.3,24,"كرتونة"],["بسكويت سادة","شوكولاتة","شوكولاتة وحلويات","حبة",2.1,2.6,24,"كرتونة"],["بسكويت ويفر","شوكولاتة","شوكولاتة وحلويات","حبة",2.3,2.9,24,"كرتونة"],["بسكويت أطفال","شوكولاتة","شوكولاتة وحلويات","حبة",2.6,3.2,24,"كرتونة"],["علكة نعناع","شوكولاتة","شوكولاتة وحلويات","حبة",1.0,1.2,24,"كرتونة"],["علكة فواكه","شوكولاتة","شوكولاتة وحلويات","حبة",1.2,1.5,24,"كرتونة"],["مصاص","شوكولاتة","شوكولاتة وحلويات","حبة",1.4,1.8,24,"كرتونة"],["حلوى جيلاتين","شوكولاتة","شوكولاتة وحلويات","حبة",1.7,2.1,24,"كرتونة"],["حلوى طرية","شوكولاتة","شوكولاتة وحلويات","حبة",1.8,2.3,24,"كرتونة"],["حلوى صلبة","شوكولاتة","شوكولاتة وحلويات","حبة",2.1,2.6,24,"كرتونة"],["سكاكر مشكلة","شوكولاتة","شوكولاتة وحلويات","حبة",2.3,2.9,24,"كرتونة"],["كراميل","شوكولاتة","شوكولاتة وحلويات","حبة",2.6,3.2,24,"كرتونة"],["توفي","شوكولاتة","شوكولاتة وحلويات","حبة",1.0,1.2,24,"كرتونة"],["ملبن","شوكولاتة","شوكولاتة وحلويات","حبة",1.2,1.5,24,"كرتونة"],["راحة","شوكولاتة","شوكولاتة وحلويات","حبة",1.4,1.8,24,"كرتونة"],["حلاوة طحينية صغيرة","شوكولاتة","شوكولاتة وحلويات","حبة",1.7,2.1,24,"كرتونة"],["حلاوة طحينية كبيرة","شوكولاتة","شوكولاتة وحلويات","حبة",1.8,2.3,24,"كرتونة"],["كاكاو بودرة","شوكولاتة","شوكولاتة وحلويات","حبة",2.1,2.6,24,"كرتونة"],["بودرة شوكولاتة","شوكولاتة","شوكولاتة وحلويات","حبة",2.3,2.9,24,"كرتونة"],["شيبس شوكولاتة","شوكولاتة","شوكولاتة وحلويات","حبة",2.6,3.2,24,"كرتونة"],["بسكويت دايجستف","شوكولاتة","شوكولاتة وحلويات","حبة",1.0,1.2,24,"كرتونة"],["بسكويت مالح","شوكولاتة","شوكولاتة وحلويات","حبة",1.2,1.5,24,"كرتونة"],["بسكويت بالتمر","شوكولاتة","شوكولاتة وحلويات","حبة",1.4,1.8,24,"كرتونة"],["مياه 250مل","مشروبات","مشروبات","عبوة",1.1,1.4,12,"كرتونة"],["مياه 500مل","مشروبات","مشروبات","عبوة",1.4,1.7,12,"كرتونة"],["مياه 1.5 لتر","مشروبات","مشروبات","لتر",1.6,2.0,12,"كرتونة"],["مياه 2 لتر","مشروبات","مشروبات","لتر",1.9,2.4,12,"كرتونة"],["كولا 250مل","مشروبات","مشروبات","عبوة",2.2,2.7,12,"كرتونة"],["كولا 330مل","مشروبات","مشروبات","عبوة",2.5,3,12,"كرتونة"],["كولا 500مل","مشروبات","مشروبات","عبوة",2.6,3.3,12,"كرتونة"],["كولا 1 لتر","مشروبات","مشروبات","لتر",2.9,3.6,12,"كرتونة"],["كولا 1.5 لتر","مشروبات","مشروبات","لتر",1.1,1.4,12,"كرتونة"],["كولا 2.25 لتر","مشروبات","مشروبات","لتر",1.4,1.7,12,"كرتونة"],["مشروب غازي برتقال 330مل","مشروبات","مشروبات","عبوة",1.6,2.0,12,"كرتونة"],["مشروب غازي ليمون 330مل","مشروبات","مشروبات","عبوة",1.9,2.4,12,"كرتونة"],["مشروب غازي تفاح 330مل","مشروبات","مشروبات","عبوة",2.2,2.7,12,"كرتونة"],["عصير برتقال 200مل","مشروبات","مشروبات","عبوة",2.4,3.0,12,"كرتونة"],["عصير تفاح 200مل","مشروبات","مشروبات","عبوة",2.6,3.3,12,"كرتونة"],["عصير مانجا 200مل","مشروبات","مشروبات","عبوة",2.9,3.6,12,"كرتونة"],["عصير مشكل 200مل","مشروبات","مشروبات","عبوة",1.1,1.4,12,"كرتونة"],["عصير برتقال 1 لتر","مشروبات","مشروبات","لتر",1.4,1.7,12,"كرتونة"],["عصير مانجا 1 لتر","مشروبات","مشروبات","لتر",1.6,2.0,12,"كرتونة"],["عصير مشكل 1 لتر","مشروبات","مشروبات","لتر",1.9,2.4,12,"كرتونة"],["حليب شوكولاتة 200مل","مشروبات","مشروبات","عبوة",2.2,2.7,12,"كرتونة"],["حليب فراولة 200مل","مشروبات","مشروبات","عبوة",2.4,3.0,12,"كرتونة"],["مشروب طاقة 250مل","مشروبات","مشروبات","عبوة",2.6,3.3,12,"كرتونة"],["مشروب طاقة 330مل","مشروبات","مشروبات","عبوة",2.9,3.6,12,"كرتونة"],["مشروب رياضي","مشروبات","مشروبات","حبة",1.1,1.4,24,"كرتونة"],["شراب بودرة فواكه","مشروبات","مشروبات","حبة",1.4,1.7,24,"كرتونة"],["ماء غازي","مشروبات","مشروبات","عبوة",1.6,2.0,12,"كرتونة"],["قهوة باردة","مشروبات","مشروبات","حبة",1.9,2.4,24,"كرتونة"],["شاي مثلج","مشروبات","مشروبات","حبة",2.2,2.7,24,"كرتونة"],["مشروب شعير","مشروبات","مشروبات","حبة",2.4,3.0,24,"كرتونة"],["شراب نعناع","مشروبات","مشروبات","حبة",2.6,3.3,24,"كرتونة"],["شراب ليمون","مشروبات","مشروبات","حبة",2.9,3.6,24,"كرتونة"],["أرز حبة قصيرة 1كغ","مواد غذائية","بقالة جافة","حبة",5.1,6,24,"كرتونة"],["أرز حبة طويلة 1كغ","مواد غذائية","بقالة جافة","حبة",1.7,2.1,24,"كرتونة"],["أرز بسمتي 1كغ","مواد غذائية","بقالة جافة","حبة",2.0,2.5,24,"كرتونة"],["سكر 1كغ","مواد غذائية","بقالة جافة","حبة",4.2,5,24,"كرتونة"],["ملح 1كغ","مواد غذائية","بقالة جافة","حبة",2.5,3,24,"كرتونة"],["طحين أبيض 1كغ","مواد غذائية","بقالة جافة","حبة",3.0,3.8,24,"كرتونة"],["طحين أبيض 5كغ","مواد غذائية","بقالة جافة","حبة",3.3,4.1,24,"كرتونة"],["طحين أبيض 25كغ","مواد غذائية","بقالة جافة","حبة",3.6,4.5,24,"كرتونة"],["نشا 500غ","مواد غذائية","بقالة جافة","حبة",1.4,1.8,24,"كرتونة"],["سميد 1كغ","مواد غذائية","بقالة جافة","حبة",1.7,2.1,24,"كرتونة"],["عدس أحمر 1كغ","مواد غذائية","بقالة جافة","حبة",2.0,2.5,24,"كرتونة"],["عدس بني 1كغ","مواد غذائية","بقالة جافة","حبة",2.3,2.9,24,"كرتونة"],["فاصولياء بيضاء 1كغ","مواد غذائية","بقالة جافة","حبة",2.6,3.3,24,"كرتونة"],["فاصولياء حمراء 1كغ","مواد غذائية","بقالة جافة","حبة",3.0,3.8,24,"كرتونة"],["حمص حب 1كغ","مواد غذائية","بقالة جافة","حبة",3.3,4.1,24,"كرتونة"],["فول جاف 1كغ","مواد غذائية","بقالة جافة","حبة",3.6,4.5,24,"كرتونة"],["برغل ناعم 1كغ","مواد غذائية","بقالة جافة","حبة",1.4,1.8,24,"كرتونة"],["برغل خشن 1كغ","مواد غذائية","بقالة جافة","حبة",1.7,2.1,24,"كرتونة"],["فريكة 1كغ","مواد غذائية","بقالة جافة","حبة",2.0,2.5,24,"كرتونة"],["مكرونة 400غ","مواد غذائية","بقالة جافة","حبة",2.3,2.9,24,"كرتونة"],["مكرونة 500غ","مواد غذائية","بقالة جافة","حبة",2.6,3.3,24,"كرتونة"],["سباغيتي 400غ","مواد غذائية","بقالة جافة","حبة",3.0,3.8,24,"كرتونة"],["شعيرية 400غ","مواد غذائية","بقالة جافة","حبة",3.3,4.1,24,"كرتونة"],["كسكس 500غ","مواد غذائية","بقالة جافة","حبة",3.6,4.5,24,"كرتونة"],["شوفان 500غ","مواد غذائية","بقالة جافة","حبة",1.4,1.8,24,"كرتونة"],["نشا ذرة 250غ","مواد غذائية","بقالة جافة","حبة",1.7,2.1,24,"كرتونة"],["سمسم 500غ","مواد غذائية","بقالة جافة","حبة",2.0,2.5,24,"كرتونة"],["جوز هند 250غ","مواد غذائية","بقالة جافة","حبة",2.3,2.9,24,"كرتونة"],["زبيب 250غ","مواد غذائية","بقالة جافة","حبة",2.6,3.3,24,"كرتونة"],["تمر 1كغ","مواد غذائية","بقالة جافة","حبة",3.0,3.8,24,"كرتونة"],["زيت ذرة 1 لتر","مواد غذائية","زيوت وخلطات","لتر",2.8,3.5,12,"كرتونة"],["زيت ذرة 2 لتر","مواد غذائية","زيوت وخلطات","لتر",3.4,4.3,12,"كرتونة"],["زيت ذرة 3 لتر","مواد غذائية","زيوت وخلطات","لتر",25.5,30,12,"كرتونة"],["زيت عباد الشمس 1 لتر","مواد غذائية","زيوت وخلطات","لتر",4.7,5.9,12,"كرتونة"],["زيت عباد الشمس 2 لتر","مواد غذائية","زيوت وخلطات","لتر",5.4,6.7,12,"كرتونة"],["زيت عباد الشمس 3 لتر","مواد غذائية","زيوت وخلطات","لتر",6.0,7.5,12,"كرتونة"],["زيت نباتي 1 لتر","مواد غذائية","زيوت وخلطات","لتر",6.6,8.3,12,"كرتونة"],["زيت نباتي 3 لتر","مواد غذائية","زيوت وخلطات","لتر",7.3,9.1,12,"كرتونة"],["زيت زيتون 1 لتر","مواد غذائية","زيوت وخلطات","لتر",2.8,3.5,12,"كرتونة"],["زيت زيتون 2 لتر","مواد غذائية","زيوت وخلطات","لتر",3.4,4.3,12,"كرتونة"],["خل أبيض 1 لتر","مواد غذائية","زيوت وخلطات","لتر",4.1,5.1,12,"كرتونة"],["خل تفاح 500مل","مواد غذائية","زيوت وخلطات","حبة",4.7,5.9,24,"كرتونة"],["طحينة 400غ","مواد غذائية","زيوت وخلطات","حبة",5.4,6.7,24,"كرتونة"],["طحينة 800غ","مواد غذائية","زيوت وخلطات","حبة",6.0,7.5,24,"كرتونة"],["مايونيز 250غ","مواد غذائية","زيوت وخلطات","حبة",6.6,8.3,24,"كرتونة"],["مايونيز 500غ","مواد غذائية","زيوت وخلطات","حبة",7.3,9.1,24,"كرتونة"],["كاتشب 340غ","مواد غذائية","زيوت وخلطات","حبة",2.8,3.5,24,"كرتونة"],["كاتشب 700غ","مواد غذائية","زيوت وخلطات","حبة",3.4,4.3,24,"كرتونة"],["مستردة 250غ","مواد غذائية","زيوت وخلطات","حبة",4.1,5.1,24,"كرتونة"],["صلصة حارة 150مل","مواد غذائية","زيوت وخلطات","حبة",4.7,5.9,24,"كرتونة"],["تونة 160غ","معلبات","معلبات","حبة",1.7,2.1,24,"كرتونة"],["تونة 185غ","معلبات","معلبات","حبة",2.1,2.6,24,"كرتونة"],["سردين 125غ","معلبات","معلبات","حبة",2.5,3.1,24,"كرتونة"],["فول معلب 400غ","معلبات","معلبات","حبة",2.8,3.5,24,"كرتونة"],["حمص معلب 400غ","معلبات","معلبات","حبة",3.2,4.0,24,"كرتونة"],["فاصولياء معلبة 400غ","معلبات","معلبات","علبة",3.6,4.5,24,"كرتونة"],["بازيلاء معلبة 400غ","معلبات","معلبات","علبة",4.0,5.0,24,"كرتونة"],["ذرة معلبة 340غ","معلبات","معلبات","علبة",4.4,5.5,24,"كرتونة"],["فطر معلب 400غ","معلبات","معلبات","حبة",1.7,2.1,24,"كرتونة"],["مخلل خيار 500غ","معلبات","معلبات","حبة",2.1,2.6,24,"كرتونة"],["مخلل مشكل 1كغ","معلبات","معلبات","حبة",2.5,3.1,24,"كرتونة"],["زيتون أخضر 500غ","معلبات","معلبات","حبة",2.8,3.5,24,"كرتونة"],["زيتون أسود 500غ","معلبات","معلبات","حبة",3.2,4.0,24,"كرتونة"],["معجون طماطم 135غ","معلبات","معلبات","حبة",3.6,4.5,24,"كرتونة"],["معجون طماطم 400غ","معلبات","معلبات","حبة",4.0,5.0,24,"كرتونة"],["صلصة طماطم 400غ","معلبات","معلبات","حبة",4.4,5.5,24,"كرتونة"],["فاصولياء بالصلصة 400غ","معلبات","معلبات","حبة",1.7,2.1,24,"كرتونة"],["حمص بالطحينة 400غ","معلبات","معلبات","حبة",2.1,2.6,24,"كرتونة"],["حليب مكثف 397غ","معلبات","معلبات","حبة",2.5,3.1,24,"كرتونة"],["فواكه مشكلة معلبة 400غ","معلبات","معلبات","علبة",2.8,3.5,24,"كرتونة"],["حليب كامل الدسم 1 لتر","ألبان وأجبان","ألبان وأجبان","لتر",2.4,3,12,"كرتونة"],["حليب قليل الدسم 1 لتر","ألبان وأجبان","ألبان وأجبان","لتر",2.9,3.6,12,"كرتونة"],["حليب بودرة 400غ","ألبان وأجبان","ألبان وأجبان","حبة",3.5,4.4,12,"كرتونة"],["حليب بودرة 900غ","ألبان وأجبان","ألبان وأجبان","حبة",4.2,5.2,12,"كرتونة"],["لبن 500مل","ألبان وأجبان","ألبان وأجبان","حبة",4.8,6.0,12,"كرتونة"],["لبن 1 لتر","ألبان وأجبان","ألبان وأجبان","لتر",5.4,6.8,12,"كرتونة"],["زبادي 110غ","ألبان وأجبان","ألبان وأجبان","حبة",2.4,3,12,"كرتونة"],["زبادي 170غ","ألبان وأجبان","ألبان وأجبان","حبة",2.9,3.6,12,"كرتونة"],["زبادي عائلي 1كغ","ألبان وأجبان","ألبان وأجبان","حبة",3.5,4.4,12,"كرتونة"],["جبنة مثلثات","ألبان وأجبان","ألبان وأجبان","حبة",4.2,5.2,12,"كرتونة"],["جبنة بيضاء 250غ","ألبان وأجبان","ألبان وأجبان","حبة",4.8,6.0,12,"كرتونة"],["جبنة بيضاء 500غ","ألبان وأجبان","ألبان وأجبان","حبة",5.4,6.8,12,"كرتونة"],["جبنة صفراء شرائح 200غ","ألبان وأجبان","ألبان وأجبان","حبة",2.4,3,12,"كرتونة"],["جبنة موزاريلا 200غ","ألبان وأجبان","ألبان وأجبان","حبة",2.9,3.6,12,"كرتونة"],["لبنة 250غ","ألبان وأجبان","ألبان وأجبان","حبة",3.5,4.4,12,"كرتونة"],["لبنة 500غ","ألبان وأجبان","ألبان وأجبان","حبة",4.2,5.2,12,"كرتونة"],["قشطة 170غ","ألبان وأجبان","ألبان وأجبان","حبة",4.8,6.0,12,"كرتونة"],["كريمة طبخ 200مل","ألبان وأجبان","ألبان وأجبان","حبة",5.4,6.8,12,"كرتونة"],["زبدة 200غ","ألبان وأجبان","ألبان وأجبان","حبة",2.4,3,12,"كرتونة"],["سمنة 1كغ","ألبان وأجبان","ألبان وأجبان","حبة",2.9,3.6,12,"كرتونة"],["بيض صغير","ألبان وأجبان","ألبان وأجبان","حبة",3.5,4.4,12,"كرتونة"],["بيض وسط","ألبان وأجبان","ألبان وأجبان","حبة",4.2,5.2,12,"كرتونة"],["بيض كبير","ألبان وأجبان","ألبان وأجبان","حبة",4.8,6.0,12,"كرتونة"],["خبز عربي","مخبوزات","مخبوزات","حبة",1.1,1.4,24,"كرتونة"],["خبز كماج 1كغ","مخبوزات","مخبوزات","حبة",1.4,1.7,24,"كرتونة"],["خبز كماج 2كغ","مخبوزات","مخبوزات","حبة",1.6,2.0,24,"كرتونة"],["خبز شراك","مخبوزات","مخبوزات","حبة",1.9,2.4,24,"كرتونة"],["خبز صاج","مخبوزات","مخبوزات","حبة",2.2,2.7,24,"كرتونة"],["كعك سادة","مخبوزات","مخبوزات","حبة",2.4,3.0,24,"كرتونة"],["كعك بالسمسم","مخبوزات","مخبوزات","حبة",2.6,3.3,24,"كرتونة"],["بسكويت شاي","مخبوزات","مخبوزات","حبة",2.9,3.6,24,"كرتونة"],["قرشلة","مخبوزات","مخبوزات","حبة",1.1,1.4,24,"كرتونة"],["بقلاوة","مخبوزات","مخبوزات","حبة",1.4,1.7,24,"كرتونة"],["معمول تمر","مخبوزات","مخبوزات","حبة",1.6,2.0,24,"كرتونة"],["معمول جوز","مخبوزات","مخبوزات","حبة",1.9,2.4,24,"كرتونة"],["كرواسون سادة","مخبوزات","مخبوزات","حبة",2.2,2.7,24,"كرتونة"],["كرواسون شوكولاتة","مخبوزات","مخبوزات","حبة",2.4,3.0,24,"كرتونة"],["كيك صغير","مخبوزات","مخبوزات","حبة",2.6,3.3,24,"كرتونة"],["كيك عائلي","مخبوزات","مخبوزات","حبة",2.9,3.6,24,"كرتونة"],["توست أبيض","مخبوزات","مخبوزات","حبة",1.1,1.4,24,"كرتونة"],["توست أسمر","مخبوزات","مخبوزات","حبة",1.4,1.7,24,"كرتونة"],["فتات خبز","مخبوزات","مخبوزات","حبة",1.6,2.0,24,"كرتونة"],["خبز برغر","مخبوزات","مخبوزات","حبة",1.9,2.4,24,"كرتونة"],["دجاج كامل","مجمدات","مجمدات","كيلو",7.0,8.8,10,"كرتونة"],["صدور دجاج","مجمدات","مجمدات","كيلو",9.4,11.8,10,"كرتونة"],["أفخاذ دجاج","مجمدات","مجمدات","كيلو",11.8,14.8,10,"كرتونة"],["أجنحة دجاج","مجمدات","مجمدات","كيلو",14.2,17.8,10,"كرتونة"],["كبدة دجاج","مجمدات","مجمدات","كيلو",16.6,20.8,10,"كرتونة"],["لحمة مفرومة مجمدة","مجمدات","مجمدات","كيلو",19.0,23.8,10,"كرتونة"],["لحم عجل مجمد","مجمدات","مجمدات","كيلو",7.0,8.8,10,"كرتونة"],["برغر لحم","مجمدات","مجمدات","كيلو",9.4,11.8,10,"كرتونة"],["برغر دجاج","مجمدات","مجمدات","كيلو",11.8,14.8,10,"كرتونة"],["نقانق","مجمدات","مجمدات","كيلو",14.2,17.8,10,"كرتونة"],["كفتة مجمدة","مجمدات","مجمدات","كيلو",16.6,20.8,10,"كرتونة"],["سمك فيليه","مجمدات","مجمدات","كيلو",19.0,23.8,10,"كرتونة"],["سمك سردين مجمد","مجمدات","مجمدات","كيلو",7.0,8.8,10,"كرتونة"],["جمبري مجمد","مجمدات","مجمدات","كيلو",9.4,11.8,10,"كرتونة"],["بازيلاء مجمدة","مجمدات","مجمدات","كيلو",11.8,14.8,10,"كرتونة"],["ذرة مجمدة","مجمدات","مجمدات","كيلو",14.2,17.8,10,"كرتونة"],["ملوخية مجمدة","مجمدات","مجمدات","كيلو",16.6,20.8,10,"كرتونة"],["بامية مجمدة","مجمدات","مجمدات","كيلو",19.0,23.8,10,"كرتونة"],["سبانخ مجمدة","مجمدات","مجمدات","كيلو",7.0,8.8,10,"كرتونة"],["بطاطا مقلية مجمدة","مجمدات","مجمدات","كيلو",9.4,11.8,10,"كرتونة"],["خضار مشكلة مجمدة","مجمدات","مجمدات","كيلو",11.8,14.8,10,"كرتونة"],["مسحوق غسيل 1كغ","منظفات","منظفات","عبوة",2.2,2.8,12,"كرتونة"],["مسحوق غسيل 2كغ","منظفات","منظفات","عبوة",2.7,3.4,12,"كرتونة"],["مسحوق غسيل 3كغ","منظفات","منظفات","عبوة",3.3,4.1,12,"كرتونة"],["مسحوق غسيل 5كغ","منظفات","منظفات","عبوة",3.8,4.7,12,"كرتونة"],["سائل غسيل 1 لتر","منظفات","منظفات","لتر",4.3,5.4,12,"كرتونة"],["سائل غسيل 2 لتر","منظفات","منظفات","لتر",4.8,6.0,12,"كرتونة"],["منعم ملابس 1 لتر","منظفات","منظفات","لتر",5.3,6.6,12,"كرتونة"],["منعم ملابس 2 لتر","منظفات","منظفات","لتر",5.8,7.3,12,"كرتونة"],["سائل جلي 500مل","منظفات","منظفات","عبوة",2.2,2.8,12,"كرتونة"],["سائل جلي 1 لتر","منظفات","منظفات","لتر",2.7,3.4,12,"كرتونة"],["سائل جلي 2 لتر","منظفات","منظفات","لتر",3.3,4.1,12,"كرتونة"],["كلور 1 لتر","منظفات","منظفات","لتر",3.8,4.7,12,"كرتونة"],["مطهر أرضيات 1 لتر","منظفات","منظفات","لتر",4.3,5.4,12,"كرتونة"],["منظف زجاج 500مل","منظفات","منظفات","عبوة",4.8,6.0,12,"كرتونة"],["منظف حمام 500مل","منظفات","منظفات","عبوة",5.3,6.6,12,"كرتونة"],["منظف مطبخ 500مل","منظفات","منظفات","عبوة",5.8,7.3,12,"كرتونة"],["ملمع أثاث 500مل","منظفات","منظفات","عبوة",2.2,2.8,12,"كرتونة"],["معطر جو 300مل","منظفات","منظفات","عبوة",2.7,3.4,12,"كرتونة"],["معطر ملابس 500مل","منظفات","منظفات","عبوة",3.3,4.1,12,"كرتونة"],["إسفنجة جلي","منظفات","منظفات","حبة",3.8,4.7,24,"كرتونة"],["ليف جلي","منظفات","منظفات","حبة",4.3,5.4,24,"كرتونة"],["أكياس قمامة صغيرة","منظفات","منظفات","عبوة",4.8,6.0,12,"كرتونة"],["أكياس قمامة كبيرة","منظفات","منظفات","حبة",5.3,6.6,24,"كرتونة"],["مناديل مبللة للتنظيف","منظفات","منظفات","حبة",5.8,7.3,24,"كرتونة"],["شامبو 200مل","عناية شخصية","عناية شخصية","عبوة",1.9,2.4,12,"كرتونة"],["شامبو 400مل","عناية شخصية","عناية شخصية","عبوة",2.4,3.0,12,"كرتونة"],["بلسم 200مل","عناية شخصية","عناية شخصية","عبوة",2.9,3.6,12,"كرتونة"],["صابون قطعة","عناية شخصية","عناية شخصية","حبة",3.3,4.1,24,"كرتونة"],["صابون سائل 250مل","عناية شخصية","عناية شخصية","عبوة",3.8,4.7,12,"كرتونة"],["صابون سائل 500مل","عناية شخصية","عناية شخصية","عبوة",4.2,5.2,12,"كرتونة"],["معجون أسنان صغير","عناية شخصية","عناية شخصية","عبوة",4.6,5.8,12,"كرتونة"],["معجون أسنان كبير","عناية شخصية","عناية شخصية","حبة",5.1,6.4,24,"كرتونة"],["فرشاة أسنان","عناية شخصية","عناية شخصية","حبة",1.9,2.4,24,"كرتونة"],["خيط أسنان","عناية شخصية","عناية شخصية","حبة",2.4,3.0,24,"كرتونة"],["غسول فم 250مل","عناية شخصية","عناية شخصية","عبوة",2.9,3.6,12,"كرتونة"],["مزيل عرق رول","عناية شخصية","عناية شخصية","حبة",3.3,4.1,24,"كرتونة"],["مزيل عرق بخاخ","عناية شخصية","عناية شخصية","حبة",3.8,4.7,24,"كرتونة"],["كريم شعر","عناية شخصية","عناية شخصية","حبة",4.2,5.2,24,"كرتونة"],["جل شعر","عناية شخصية","عناية شخصية","حبة",4.6,5.8,24,"كرتونة"],["مناديل مبللة","عناية شخصية","عناية شخصية","حبة",5.1,6.4,24,"كرتونة"],["مناديل جيب","عناية شخصية","عناية شخصية","حبة",1.9,2.4,24,"كرتونة"],["مناديل ورقية","عناية شخصية","عناية شخصية","حبة",2.4,3.0,24,"كرتونة"],["محارم حمام","عناية شخصية","عناية شخصية","حبة",2.9,3.6,24,"كرتونة"],["شفرة حلاقة","عناية شخصية","عناية شخصية","حبة",3.3,4.1,24,"كرتونة"],["كريم حلاقة","عناية شخصية","عناية شخصية","حبة",3.8,4.7,24,"كرتونة"],["قطن طبي","عناية شخصية","عناية شخصية","حبة",4.2,5.2,24,"كرتونة"],["أعواد قطن","عناية شخصية","عناية شخصية","حبة",4.6,5.8,24,"كرتونة"],["حليب أطفال 400غ","أطفال","أطفال","عبوة",5.1,6.2,12,"كرتونة"],["حليب أطفال 900غ","أطفال","أطفال","عبوة",7.2,8.8,12,"كرتونة"],["حفاضات مقاس 1","أطفال","أطفال","حبة",9.2,11.2,12,"كرتونة"],["حفاضات مقاس 2","أطفال","أطفال","حبة",11.3,13.8,12,"كرتونة"],["حفاضات مقاس 3","أطفال","أطفال","حبة",13.3,16.2,12,"كرتونة"],["حفاضات مقاس 4","أطفال","أطفال","حبة",15.4,18.8,12,"كرتونة"],["حفاضات مقاس 5","أطفال","أطفال","حبة",17.5,21.3,12,"كرتونة"],["حفاضات مقاس 6","أطفال","أطفال","حبة",5.1,6.2,12,"كرتونة"],["مناديل أطفال","أطفال","أطفال","حبة",7.2,8.8,12,"كرتونة"],["شامبو أطفال","أطفال","أطفال","حبة",9.2,11.2,12,"كرتونة"],["صابون أطفال","أطفال","أطفال","حبة",11.3,13.8,12,"كرتونة"],["كريم أطفال","أطفال","أطفال","حبة",13.3,16.2,12,"كرتونة"],["بودرة أطفال","أطفال","أطفال","حبة",15.4,18.8,12,"كرتونة"],["زجاجة رضاعة","أطفال","أطفال","حبة",17.5,21.3,12,"كرتونة"],["مصاصة أطفال","أطفال","أطفال","حبة",5.1,6.2,12,"كرتونة"],["سيريلاك أرز","أطفال","أطفال","حبة",7.2,8.8,12,"كرتونة"],["سيريلاك قمح","أطفال","أطفال","حبة",9.2,11.2,12,"كرتونة"],["عصيدة أطفال","أطفال","أطفال","حبة",11.3,13.8,12,"كرتونة"],["كاسات بلاستيك","أدوات منزلية","أدوات منزلية","حبة",1.4,1.8,24,"كرتونة"],["أطباق بلاستيك","أدوات منزلية","أدوات منزلية","حبة",1.7,2.1,24,"كرتونة"],["ملاعق بلاستيك","أدوات منزلية","أدوات منزلية","حبة",2.0,2.5,24,"كرتونة"],["شوك بلاستيك","أدوات منزلية","أدوات منزلية","حبة",2.3,2.9,24,"كرتونة"],["سكاكين بلاستيك","أدوات منزلية","أدوات منزلية","حبة",2.6,3.3,24,"كرتونة"],["أكواب ورقية","أدوات منزلية","أدوات منزلية","حبة",3.0,3.8,24,"كرتونة"],["أطباق ورقية","أدوات منزلية","أدوات منزلية","حبة",3.3,4.1,24,"كرتونة"],["أكياس حفظ طعام","أدوات منزلية","أدوات منزلية","حبة",3.6,4.5,24,"كرتونة"],["ورق ألمنيوم","أدوات منزلية","أدوات منزلية","حبة",1.4,1.8,24,"كرتونة"],["ورق زبدة","أدوات منزلية","أدوات منزلية","حبة",1.7,2.1,24,"كرتونة"],["نايلون تغليف","أدوات منزلية","أدوات منزلية","حبة",2.0,2.5,24,"كرتونة"],["مناديل سفرة","أدوات منزلية","أدوات منزلية","حبة",2.3,2.9,24,"كرتونة"],["إسفنج مطبخ","أدوات منزلية","أدوات منزلية","حبة",2.6,3.3,24,"كرتونة"],["قفازات مطبخ","أدوات منزلية","أدوات منزلية","حبة",3.0,3.8,24,"كرتونة"],["أعواد خشبية","أدوات منزلية","أدوات منزلية","حبة",3.3,4.1,24,"كرتونة"],["أعواد أسنان","أدوات منزلية","أدوات منزلية","حبة",3.6,4.5,24,"كرتونة"],["ولاعة","أدوات منزلية","أدوات منزلية","حبة",1.4,1.8,24,"كرتونة"],["شموع","أدوات منزلية","أدوات منزلية","حبة",1.7,2.1,24,"كرتونة"],["حبال غسيل","أدوات منزلية","أدوات منزلية","حبة",2.0,2.5,24,"كرتونة"],["مشابك غسيل","أدوات منزلية","أدوات منزلية","حبة",2.3,2.9,24,"كرتونة"],["مكنسة صغيرة","أدوات منزلية","أدوات منزلية","حبة",2.6,3.3,24,"كرتونة"],["ممسحة أرضيات","أدوات منزلية","أدوات منزلية","حبة",3.0,3.8,24,"كرتونة"],["سطل بلاستيك","أدوات منزلية","أدوات منزلية","حبة",3.3,4.1,24,"كرتونة"],["سلة مهملات","أدوات منزلية","أدوات منزلية","حبة",3.6,4.5,24,"كرتونة"],["علب حفظ طعام","أدوات منزلية","أدوات منزلية","حبة",1.4,1.8,24,"كرتونة"],["قلم جاف أزرق","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["قلم جاف أسود","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["قلم جاف أحمر","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["قلم رصاص","قرطاسية","قرطاسية","حبة",1.0,1.2,24,"كرتونة"],["ممحاة","قرطاسية","قرطاسية","حبة",1.0,1.3,24,"كرتونة"],["براية","قرطاسية","قرطاسية","حبة",1.2,1.5,24,"كرتونة"],["مسطرة 20سم","قرطاسية","قرطاسية","حبة",1.4,1.7,24,"كرتونة"],["مسطرة 30سم","قرطاسية","قرطاسية","حبة",1.4,1.8,24,"كرتونة"],["دفتر 40 ورقة","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["دفتر 60 ورقة","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["دفتر 80 ورقة","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["دفتر 100 ورقة","قرطاسية","قرطاسية","حبة",1.0,1.2,24,"كرتونة"],["دفتر 200 ورقة","قرطاسية","قرطاسية","حبة",1.0,1.3,24,"كرتونة"],["ورق A4","قرطاسية","قرطاسية","حبة",1.2,1.5,24,"كرتونة"],["ملف بلاستيك","قرطاسية","قرطاسية","حبة",1.4,1.7,24,"كرتونة"],["مجلد","قرطاسية","قرطاسية","حبة",1.4,1.8,24,"كرتونة"],["لاصق شفاف","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["غراء صغير","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["غراء كبير","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["ألوان خشبية","قرطاسية","قرطاسية","حبة",1.0,1.2,24,"كرتونة"],["ألوان شمعية","قرطاسية","قرطاسية","حبة",1.0,1.3,24,"كرتونة"],["قلم تحديد","قرطاسية","قرطاسية","حبة",1.2,1.5,24,"كرتونة"],["ماركر","قرطاسية","قرطاسية","حبة",1.4,1.7,24,"كرتونة"],["دباسة","قرطاسية","قرطاسية","حبة",1.4,1.8,24,"كرتونة"],["دبابيس دباسة","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["مقص","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["آلة حاسبة","قرطاسية","قرطاسية","حبة",0.8,1,24,"كرتونة"],["بطاطا","مواد غذائية","خضار وفواكه","كيلو",6.0,7,10,"كرتونة"],["بصل ناشف","مواد غذائية","خضار وفواكه","كيلو",6.0,7,10,"كرتونة"],["ثوم ناشف","مواد غذائية","خضار وفواكه","كيلو",6.2,7.9,10,"كرتونة"],["بندورة","مواد غذائية","خضار وفواكه","كيلو",9.3,11,10,"كرتونة"],["خيار","مواد غذائية","خضار وفواكه","كيلو",8.0,10.3,10,"كرتونة"],["كوسا","مواد غذائية","خضار وفواكه","كيلو",9.0,11.5,10,"كرتونة"],["باذنجان","مواد غذائية","خضار وفواكه","كيلو",4.2,5,10,"كرتونة"],["فلفل أخضر حار","مواد غذائية","خضار وفواكه","كيلو",4.3,5.5,10,"كرتونة"],["فليفلة حلوة","مواد غذائية","خضار وفواكه","كيلو",5.2,6.7,10,"كرتونة"],["ملفوف","مواد غذائية","خضار وفواكه","كيلو",6.2,7.9,10,"كرتونة"],["زهرة","مواد غذائية","خضار وفواكه","كيلو",7.1,9.1,10,"كرتونة"],["بامية","مواد غذائية","خضار وفواكه","كيلو",39.1,46,10,"كرتونة"],["فاصولياء خضراء","مواد غذائية","خضار وفواكه","كيلو",9.0,11.5,10,"كرتونة"],["ملوخية طازجة","مواد غذائية","خضار وفواكه","كيلو",9.9,12.7,10,"كرتونة"],["سبانخ","مواد غذائية","خضار وفواكه","كيلو",4.3,5.5,10,"كرتونة"],["جزر","مواد غذائية","خضار وفواكه","كيلو",5.2,6.7,10,"كرتونة"],["لفت","مواد غذائية","خضار وفواكه","كيلو",6.2,7.9,10,"كرتونة"],["خس","مواد غذائية","خضار وفواكه","كيلو",7.1,9.1,10,"كرتونة"],["بقدونس","مواد غذائية","خضار وفواكه","كيلو",8.0,10.3,10,"كرتونة"],["نعناع","مواد غذائية","خضار وفواكه","كيلو",9.0,11.5,10,"كرتونة"],["موز","مواد غذائية","خضار وفواكه","كيلو",10.2,12,10,"كرتونة"],["تفاح","مواد غذائية","خضار وفواكه","كيلو",11.0,13,10,"كرتونة"],["برتقال","مواد غذائية","خضار وفواكه","كيلو",6.8,8,10,"كرتونة"],["ليمون","مواد غذائية","خضار وفواكه","كيلو",11.9,14,10,"كرتونة"],["رمان","مواد غذائية","خضار وفواكه","كيلو",7.1,9.1,10,"كرتونة"],["أفوكادو","مواد غذائية","خضار وفواكه","كيلو",8.0,10.3,10,"كرتونة"],["بطيخ","مواد غذائية","خضار وفواكه","كيلو",9.0,11.5,10,"كرتونة"],["شمام","مواد غذائية","خضار وفواكه","كيلو",9.9,12.7,10,"كرتونة"],["فراولة","مواد غذائية","خضار وفواكه","كيلو",4.3,5.5,10,"كرتونة"],["عنب","مواد غذائية","خضار وفواكه","كيلو",5.2,6.7,10,"كرتونة"],["قهوة مطحونة 250غ","مشروبات","قهوة وشاي","حبة",5.6,7.0,24,"كرتونة"],["قهوة مطحونة 500غ","مشروبات","قهوة وشاي","حبة",6.9,8.6,24,"كرتونة"],["قهوة مطحونة 1كغ","مشروبات","قهوة وشاي","حبة",108.0,127,24,"كرتونة"],["قهوة سريعة التحضير 50غ","مشروبات","قهوة وشاي","حبة",9.4,11.8,24,"كرتونة"],["قهوة سريعة التحضير 100غ","مشروبات","قهوة وشاي","حبة",10.7,13.4,24,"كرتونة"],["شاي 25 كيس","مشروبات","قهوة وشاي","حبة",12.0,15.0,24,"كرتونة"],["شاي 50 كيس","مشروبات","قهوة وشاي","حبة",13.3,16.6,24,"كرتونة"],["شاي 100 كيس","مشروبات","قهوة وشاي","حبة",14.6,18.2,24,"كرتونة"],["شاي أسود 250غ","مشروبات","قهوة وشاي","حبة",5.6,7.0,24,"كرتونة"],["شاي أخضر 25 كيس","مشروبات","قهوة وشاي","حبة",6.9,8.6,24,"كرتونة"],["يانسون 100غ","مشروبات","قهوة وشاي","حبة",8.2,10.2,24,"كرتونة"],["بابونج 100غ","مشروبات","قهوة وشاي","حبة",9.4,11.8,24,"كرتونة"],["قرفة 100غ","مشروبات","قهوة وشاي","حبة",10.7,13.4,24,"كرتونة"],["زنجبيل 100غ","مشروبات","قهوة وشاي","حبة",12.0,15.0,24,"كرتونة"],["نسكافيه 100غ","مشروبات","قهوة وشاي","حبة",13.3,16.6,24,"كرتونة"],["كاكاو 200غ","مشروبات","قهوة وشاي","حبة",14.6,18.2,24,"كرتونة"]];
+function openGazaCatalog(){
+ const cats=['الكل',...Array.from(new Set(GAZA_CATALOG.map(x=>x[1])))];
+ const count=GAZA_CATALOG.length;
+ openModal('🇵🇸 كتالوج غزة الموسّع — أصناف حسب التصنيف',`<div class="catalog-head"><div class="card"><b>${count} صنفاً</b><p class="sub">كل صنف مستقل ويمكن استيراده منفرداً أو حسب التصنيف. الأسعار الحالية المتاحة رسميًا في غزة تُستخدم كمرجع، والباقي أسعار افتتاحية قابلة للتعديل.</p></div><div class="form"><div class="field"><label>التصنيف</label><select id="gcat" class="input" onchange="renderGazaCatalog()">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="field"><label>بحث</label><input id="gq" class="input" placeholder="ابحث عن اسم الصنف..." oninput="renderGazaCatalog()"></div></div><div id="glist" class="catalog-list"></div><div class="modal-actions"><button class="btn" onclick="closeModal()">إغلاق</button><button class="btn soft" onclick="importSelectedGazaCatalog()">إضافة المحدد</button><button class="btn primary" onclick="importGazaCatalog()">إضافة كل الأصناف الظاهرة</button></div></div>`);
+ renderGazaCatalog();
+}
+function renderGazaCatalog(){
+ const cat=document.getElementById('gcat')?.value||'الكل',q=(document.getElementById('gq')?.value||'').trim().toLowerCase();
+ const a=GAZA_CATALOG.map((x,i)=>({...{x,i},x})).filter(o=>(cat==='الكل'||o.x[1]===cat)&&(!q||o.x[0].toLowerCase().includes(q)||o.x[2].toLowerCase().includes(q)));
+ document.getElementById('glist').innerHTML=`<div class="catalog-tools"><label><input type="checkbox" id="gall" onchange="toggleAllGaza(this)"> تحديد الكل</label><span>${a.length} صنف</span></div>`+a.map(o=>{let [n,c,sub,u,b,s,ps,pu]=o.x;return `<label class="catalog-item"><input class="gcheck" type="checkbox" data-idx="${o.i}"><span><b>${esc(n)}</b><small>${esc(c)} › ${esc(sub)} · ${u} / ${pu} × ${ps}</small></span><strong>${money(s)}</strong></label>`}).join('')||'<div class="empty">لا توجد أصناف مطابقة</div>';
+}
+function toggleAllGaza(el){document.querySelectorAll('#glist .gcheck').forEach(x=>x.checked=el.checked)}
+function importSelectedGazaCatalog(){
+ const ids=[...document.querySelectorAll('#glist .gcheck:checked')].map(x=>Number(x.dataset.idx));
+ if(!ids.length)return toast('حدد صنفاً واحداً على الأقل'); importGazaRows(ids.map(i=>GAZA_CATALOG[i]));
+}
+function importGazaRows(rows){
+ let added=0,updated=0;
+ rows.forEach(x=>{let [name,cat,sub,unit,buy,sell,packSize,packUnit]=x,p=db.products.find(p=>p.name===name); if(p){p=normalizeProduct(p);p.buy=buy;p.sell=sell;p.packSize=packSize;p.packUnit=packUnit;p.packBuy=buy*packSize;p.packSell=sell*packSize;p.cat=cat;p.subcat=sub;updated++;}else{db.products.push({id:uid('p'),name,cat,subcat:sub,unit,qty:0,buy,sell,packSize,packUnit,packBuy:buy*packSize,packSell:sell*packSize,low:db.settings.low,barcode:'',sku:'GZ-'+Date.now().toString(36).slice(-5).toUpperCase()});added++;}});
+ log('استيراد كتالوج غزة',`${added} جديد، ${updated} محدث`);save();renderAll();toast(`تمت إضافة ${added} صنف وتحديث ${updated}`);
+}
+
+function importGazaCatalog(){
+ const cat=document.getElementById('gcat')?.value||'الكل',q=(document.getElementById('gq')?.value||'').trim().toLowerCase();
+ const rows=GAZA_CATALOG.filter(x=>(cat==='الكل'||x[1]===cat)&&(!q||x[0].toLowerCase().includes(q)||x[2].toLowerCase().includes(q)));
+ if(!rows.length)return toast('لا توجد أصناف للاستيراد'); importGazaRows(rows); closeModal();
+}
+
+function openCustomer(){
+ openModal('إضافة عميل جديد',`<div class="form">
+ <div class="field"><label>اسم العميل</label><input id="cn" class="input"></div>
+ <div class="field"><label>رقم الهاتف</label><input id="cp" class="input"></div>
+ <div class="field full"><label>ملاحظات</label><textarea id="cno" class="input"></textarea></div>
+ </div><div class="modal-actions"><button class="btn primary" onclick="saveCustomer()">حفظ العميل</button></div>`);
+}
+
+function saveCustomer(){
+ let n=cn.value.trim();if(!n)return toast('أدخل اسم العميل');
+ db.customers.push({id:uid('c'),name:n,phone:cp.value,balance:0,last:'',note:cno.value});
+ log('إضافة عميل',n);save();closeModal();renderAll();toast('تمت إضافة العميل بنجاح');
+}
+
+function openPayment(id=''){
+ let opts=db.customers.map(c=>`<option value="${c.id}" ${c.id===id?'selected':''}>${esc(c.name)} — رصيد مستحق: ${money(c.balance)}</option>`).join('');
+ openModal('تسجيل دفعة نقدية من عميل',`<div class="form">
+ <div class="field"><label>العميل</label><select id="payc" class="input">${opts}</select></div>
+ <div class="field"><label>المبلغ المدفوع</label><input id="paya" type="number" class="input"></div>
+ </div><div class="modal-actions"><button class="btn primary" onclick="savePayment()">تأكيد وتسجيل الدفعة</button></div>`);
+}
+
+function savePayment(){
+ let c=db.customers.find(x=>x.id===payc.value),a=Number(paya.value)||0;
+ if(!c||a<=0)return toast('أدخل مبلغاً صحيحاً واقترن بالعميل');
+ c.balance=Math.max(0,c.balance-a);c.last=today();
+ db.payments.push({id:uid('pay'),customerId:c.id,amount:a,date:today()});
+ log('قبض دفعة عميل',c.name+' — '+money(a));save();closeModal();renderAll();toast('تم تسجيل الدفعة بنجاح');
+}
+
+function customerStatement(id){
+ let c=db.customers.find(x=>x.id===id),sales=db.sales.filter(x=>x.customerId===id),pays=db.payments.filter(x=>x.customerId===id);
+ openModal('كشف حساب العميل — '+esc(c.name),`<div class="card" style="margin-bottom:14px"><div class="kpi bad">${money(c.balance)}</div><div class="sub">إجمالي الدين الحالي</div></div>
+ <div>${sales.map(s=>`<div class="row"><span>فاتورة #${s.code}<br><small>${fmt(s.date)}</small></span><b class="bad">+ ${money(s.total)}</b></div>`).join('')}${pays.map(p=>`<div class="row"><span>دفعة مسددة<br><small>${fmt(p.date)}</small></span><b class="good">- ${money(p.amount)}</b></div>`).join('')||'<div class="empty">لا توجد دفعات سابقة</div>'}</div>`);
+}
+
+function openSupplier(s={}){
+ s={id:'',name:'',phone:'',balance:0,note:'',...s};
+ openModal(s.id?'تعديل مورد':'إضافة مورد جديد',`<div class="form">
+ <div class="field"><label>اسم المورد</label><input id="sn" class="input" value="${esc(s.name)}"></div>
+ <div class="field"><label>الهاتف</label><input id="sp" class="input" value="${esc(s.phone)}"></div>
+ <div class="field full"><label>ملاحظات</label><textarea id="sno" class="input">${esc(s.note)}</textarea></div>
+ </div><div class="modal-actions"><button class="btn primary" onclick="saveSupplier('${s.id}')">حفظ المورد</button></div>`);
+}
+
+function saveSupplier(id){
+ let x={id:id||uid('sup'),name:sn.value.trim(),phone:sp.value,note:sno.value,balance:id?(db.suppliers.find(a=>a.id===id)?.balance||0):0};
+ if(!x.name)return toast('أدخل اسم المورد');
+ let i=db.suppliers.findIndex(a=>a.id===x.id);
+ i>=0?db.suppliers[i]=x:db.suppliers.push(x);
+ log(i>=0?'تعديل مورد':'إضافة مورد',x.name);save();closeModal();renderAll();toast('تم حفظ المورد بنجاح');
+}
+
+function openExpense(){
+ openModal('تسجيل مصروف جديد',`<div class="form">
+ <div class="field"><label>بيان المصروف</label><input id="en" class="input"></div>
+ <div class="field"><label>التصنيف</label><select id="ec" class="input"><option>تشغيل وإدارة</option><option>إيجار</option><option>كهرباء ومياه</option><option>رواتب</option><option>نقل ومواصلات</option><option>صيانة</option><option>أخرى</option></select></div>
+ <div class="field"><label>المبلغ</label><input id="ea" type="number" class="input"></div>
+ <div class="field"><label>التاريخ</label><input id="ed" type="date" class="input" value="${today()}"></div>
+ </div><div class="modal-actions"><button class="btn primary" onclick="saveExpense()">حفظ المصروف</button></div>`);
+}
+
+function saveExpense(){
+ let a=Number(ea.value)||0,n=en.value.trim();
+ if(!n||a<=0)return toast('أكمل بيانات المصروف بشكل صحيح');
+ db.expenses.push({id:uid('e'),name:n,cat:ec.value,amount:a,date:ed.value});
+ log('تسجيل مصروف',n+' — '+money(a));save();closeModal();renderAll();toast('تم حفظ المصروف بنجاح');
+}
+
+function inventoryAdjust(){
+ openModal('تسوية جرد المخزون',`<div class="form">
+ <div class="field"><label>الصنف</label><select id="ap" class="input">${db.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${esc(p.unit)}) — متوفر: ${p.qty}</option>`).join('')}</select></div>
+ <div class="field"><label>الكمية الفعلية الصحيحة الجديدة</label><input id="aq" type="number" step="any" class="input"></div>
+ <div class="field full"><label>سبب التسوية الجردية</label><input id="ar" class="input" placeholder="مثلاً: جرد دوري، تلف، عجز..."></div>
+ </div><div class="modal-actions"><button class="btn primary" onclick="saveAdjust()">اعتماد التسوية</button></div>`);
+}
+
+function saveAdjust(){
+ let p=db.products.find(x=>x.id===ap.value),q=Number(aq.value);
+ if(!p||isNaN(q))return toast('بيانات غير صحيحة');
+ let old=p.qty;p.qty=q;
+ log('تسوية جرد',p.name+` من ${old} إلى ${q} — ${ar.value}`);save();closeModal();renderAll();toast('تمت التسوية بنجاح');
+}
+
+function scanBarcode(){
+ let code=prompt('أدخل أو امسح الباركود للصنف:');
+ if(code){
+  iq.value=code;renderInventory();
+  let p=db.products.find(x=>x.barcode===code);
+  if(p)openProduct(p);else toast('لم يتم العثور على صنف بهذا الباركود');
+ }
+}
+
+function clearAudit(){if(confirm('هل تريد مسح سجل العمليات بالكامل؟')){db.audit=[];save();renderAll();toast('تم مسح السجل')}}
+function backup(){
+ let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
+ a.download='hesabi-pro-units-'+today()+'.json';a.click();toast('تم تنزيل النسخة الاحتياطية');
+}
+function restore(e){
+ let f=e.target.files[0],r=new FileReader();
+ r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.products||!x.sales)throw 1;db=x;save();renderAll();toast('تم استعادة البيانات بنجاح')}catch{toast('الملف غير صالح')}};
+ r.readAsText(f);
+}
+function resetData(){if(confirm('تحذير: سيتم حذف جميع البيانات نهائياً. هل أنت متأكد؟')){localStorage.removeItem(KEY);location.reload()}}
+
+function viewInvoice(id){
+ let x=db.sales.find(a=>a.id===id);if(!x)return;
+ openModal('تفاصيل ورقة الفاتورة — '+x.code,`<div class="card"><div class="row"><span>رقم الفاتورة</span><b>${esc(x.code)}</b></div><div class="row"><span>العميل</span><b>${esc(x.customerName)}</b></div><div class="row"><span>التاريخ</span><b>${fmt(x.date)}</b></div><div class="row"><span>النوع</span><b>${x.type}</b></div><div class="row"><span>الإجمالي</span><b class="good">${money(x.total)}</b></div><div class="row"><span>الأصناف والكميات</span><div>${x.items.map(i=>`<div>• ${esc(i.name)} × ${i.qty} = ${money(i.qty*i.price)}</div>`).join('')}</div></div></div>`);
+}
+
+function viewPurchase(id){
+ let x=db.purchases.find(a=>a.id===id);if(!x)return;
+ openModal('تفاصيل فاتورة الشراء — '+x.code,`<div class="card"><div class="row"><span>رقم الفاتورة</span><b>${esc(x.code)}</b></div><div class="row"><span>المورد</span><b>${esc(x.supplier)}</b></div><div class="row"><span>التاريخ</span><b>${fmt(x.date)}</b></div><div class="row"><span>الإجمالي</span><b>${money(x.total)}</b></div><div class="row"><span>الأصناف المستلمة</span><div>${x.items.map(i=>`<div>• ${esc(i.name)} × ${i.qty}</div>`).join('')}</div></div></div>`);
+}
+
+function openPOS(){
+ let opts=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${esc(p.unit)}) — ${money(p.sell)} (متوفر: ${p.qty})</option>`).join('');
+ openModal('نقطة البيع السريعة (POS)',`<div class="form"><div class="field full"><label>اختر الصنف لإضافته للسرعة</label><select id="posp" class="input" onchange="posAdd()">${opts}</select></div></div>
+ <div id="poscart" style="margin-top:10px"></div><div class="card" style="margin-top:12px"><div class="row"><span>إجمالي الأصناف</span><b id="posCount">0</b></div><div class="row"><strong>الإجمالي النهائي</strong><strong class="good" id="posTotal">${money(0)}</strong></div></div>
+ <div class="modal-actions"><button class="btn primary" onclick="savePOS()">إتمام البيع نقدًا وفورياً</button></div>`);
+ posAdd();
+}
+
+function posAdd(){
+ let p=db.products.find(x=>x.id===posp.value);if(!p)return;
+ let row=document.createElement('div');row.className='row posrow';row.dataset.id=p.id;
+ row.innerHTML=`<span><b>${esc(p.name)} (${esc(p.unit)})</b><br><small>${money(p.sell)}</small></span><input class="input posqty" style="max-width:100px" type="number" step="any" min="0.1" max="${p.qty}" value="1" oninput="calcPOS()">`;
+ poscart.appendChild(row);calcPOS();
+}
+
+function calcPOS(){
+ let total=0,count=0;
+ document.querySelectorAll('.posrow').forEach(r=>{
+  let p=db.products.find(x=>x.id===r.dataset.id),q=Number(r.querySelector('.posqty').value)||0;
+  total+=(p?.sell||0)*q;count+=q;
+ });
+ posTotal.textContent=money(total);posCount.textContent=count;
+}
+
+function savePOS(){
+ let items=[],valid=true;
+ document.querySelectorAll('.posrow').forEach(r=>{
+  let p=db.products.find(x=>x.id===r.dataset.id),q=Number(r.querySelector('.posqty').value)||0;
+  if(!p||q<=0||q>p.qty)valid=false;
+  else items.push({productId:p.id,name:p.name+' ('+p.unit+')',qty:q,price:p.sell,buy:p.buy});
+ });
+ if(!valid||!items.length)return toast('تحقق من صحة الكميات والأصناف المتاحة');
+ let total=items.reduce((a,x)=>a+x.qty*x.price,0),cost=items.reduce((a,x)=>a+x.qty*x.buy,0);
+ items.forEach(i=>db.products.find(p=>p.id===i.productId).qty-=i.qty);
+ let x={id:uid('s'),code:'POS-'+String(db.sales.length+1).padStart(5,'0'),date:today(),created:new Date().toISOString(),customerId:'',customerName:'نقدي (POS)',type:'نقدي',total,discount:0,profit:total-cost,cost,items,note:'نقطة بيع سريعة'};
+ db.sales.push(x);log('نقطة بيع',x.code+' — '+money(total));save();closeModal();renderAll();toast('تمت عملية البيع السريع بنجاح');
+}
+
+function shareLastInvoice(){
+ let x=db.sales[db.sales.length-1];if(!x)return toast('لا توجد فواتير للمشاركة');
+ let text=`${db.settings.business}\nفاتورة بيع #${x.code}\nالتاريخ: ${fmt(x.date)}\nالإجمالي: ${money(x.total)}`;
+ if(navigator.share)navigator.share({title:x.code,text}).catch(()=>{});
+ else navigator.clipboard?.writeText(text).then(()=>toast('تم نسخ تفاصيل الفاتورة بنجاح'));
+}
+
+function calcPrice(){
+ let c=Number(calcCost.value)||0,m=Number(calcMargin.value)||0;
+ calcResult.textContent='سعر البيع المقترح: '+money(c*(1+m/100));
+}
+
+function addTask(){
+ let t=prompt('اكتب المهمة أو التذكير الجديد:');if(!t)return;
+ db.tasks=db.tasks||[];db.tasks.push({id:uid('t'),text:t,done:false});save();renderMore();toast('تمت الإضافة');
+}
+
+function toggleTask(id){
+ let t=db.tasks.find(x=>x.id===id);if(t)t.done=!t.done;save();renderMore();
+}
+
+function renderMore(){
+ let buy=db.products.reduce((a,p)=>a+p.qty*p.buy,0),sell=db.products.reduce((a,p)=>a+p.qty*p.sell,0);
+ stockBuyValue.textContent=money(buy);stockSellValue.textContent=money(sell);stockPotential.textContent=money(sell-buy);
+ let low=db.products.filter(p=>p.qty<=Number(p.low||db.settings.low));
+ alertsMore.innerHTML=low.length?low.map(p=>`<div class="row"><span>${esc(p.name)} (${esc(p.unit)})</span><span class="pill warn">${p.qty===0?'نفد تماماً':'متبقي '+p.qty}</span></div>`).join(''):'<div class="empty">لا توجد تنبيهات مخزون حالياً</div>';
+ db.tasks=db.tasks||[];
+ tasks.innerHTML=db.tasks.length?db.tasks.map(t=>`<div class="row"><label style="display:flex;align-gap:8px;cursor:pointer"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')"> <span style="margin-right:8px; ${t.done?'text-decoration:line-through;color:var(--mut)':''}">${esc(t.text)}</span></label></div>`).join(''):'<div class="empty">لا توجد مهام حالياً</div>';
+}
+
+if('serviceWorker' in navigator && (location.protocol==='http:' || location.protocol==='https:')){
+ addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+addEventListener('online',()=>net.textContent='● متصل وجاهز');
+addEventListener('offline',()=>net.textContent='● يعمل محلياً بدون إنترنت');
+renderAll();
+</script>
+</body>
+</html> 
