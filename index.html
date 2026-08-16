@@ -268,6 +268,16 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0f14">
 
+
+<style id="gaza-price-note">
+.gaza-price-note{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card-glow);font-size:12px;line-height:1.7}
+</style>
+<script>
+(function(){
+  window.GAZA_PRICE_REFERENCE_DATE='2026-08-16';
+})();
+</script>
+
 </head>
 <body>
 
@@ -1277,6 +1287,295 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
     <button class="btn" onclick="go('more')" style="border:0;background:transparent">⋯<br><small>المزيد</small></button>
   </div>
 </div>
+
+
+<script id="qr-scanner-fix-v5">
+(function(){
+  let __qrReader = null;
+  let __qrCallback = null;
+  let __qrLocked = false;
+
+  function setScanStatus(msg){
+    const el=document.getElementById('scannerStatus');
+    if(el) el.textContent=msg;
+  }
+
+  function stopReader(){
+    try{
+      if(__qrReader){
+        if(typeof __qrReader.reset==='function') __qrReader.reset();
+        if(typeof __qrReader.stopContinuousDecode==='function') __qrReader.stopContinuousDecode();
+      }
+    }catch(e){}
+    __qrReader=null;
+  }
+
+  window.closeScanner=function(){
+    stopReader();
+    __qrLocked=false;
+    const m=document.getElementById('scannerModal');
+    if(m) m.classList.remove('show');
+  };
+
+  window.openScanner=function(onResult){
+    __qrCallback=typeof onResult==='function'?onResult:null;
+    __qrLocked=false;
+    const input=document.getElementById('scannerManual');
+    if(input) input.value='';
+    const m=document.getElementById('scannerModal');
+    if(m) m.classList.add('show');
+
+    const video=document.getElementById('scannerVideo');
+    if(video){
+      video.setAttribute('playsinline','true');
+      video.setAttribute('autoplay','true');
+      video.setAttribute('muted','true');
+    }
+
+    if(typeof ZXing==='undefined'){
+      setScanStatus('تعذر تحميل قارئ QR. استخدم الإدخال اليدوي أو أعد تحميل الصفحة مع اتصال بالإنترنت.');
+      return;
+    }
+
+    setScanStatus('وجّه الكاميرا إلى QR أو الباركود…');
+    stopReader();
+
+    try{
+      const hints = new Map();
+      if(ZXing.DecodeHintType && ZXing.BarcodeFormat){
+        hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+          ZXing.BarcodeFormat.QR_CODE,
+          ZXing.BarcodeFormat.EAN_13,
+          ZXing.BarcodeFormat.EAN_8,
+          ZXing.BarcodeFormat.CODE_128,
+          ZXing.BarcodeFormat.CODE_39,
+          ZXing.BarcodeFormat.UPC_A,
+          ZXing.BarcodeFormat.UPC_E,
+          ZXing.BarcodeFormat.ITF,
+          ZXing.BarcodeFormat.DATA_MATRIX
+        ]);
+        hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+      }
+
+      __qrReader = new ZXing.BrowserMultiFormatReader(hints, 300);
+
+      __qrReader.listVideoInputDevices().then(function(devices){
+        if(!devices || !devices.length){
+          setScanStatus('لم يتم العثور على كاميرا. اسمح للمتصفح بالكاميرا أو استخدم الإدخال اليدوي.');
+          return;
+        }
+
+        // Prefer rear/environment camera on phones.
+        const back = devices.find(d=>/back|rear|environment|خلفية/i.test(d.label));
+        const selected = back || devices[devices.length-1];
+
+        return __qrReader.decodeFromVideoDevice(
+          selected.deviceId,
+          'scannerVideo',
+          function(result, err){
+            if(!result || __qrLocked) return;
+            const text=(result.getText()||'').trim();
+            if(!text) return;
+
+            __qrLocked=true;
+            setScanStatus('✓ تم المسح: '+text);
+            const cb=__qrCallback;
+            setTimeout(function(){
+              window.closeScanner();
+              if(cb) cb(text);
+            }, 120);
+          }
+        );
+      }).catch(function(err){
+        console.error('QR camera error',err);
+        setScanStatus('تعذر تشغيل الكاميرا. تأكد من HTTPS وإذن الكاميرا، ثم جرّب الإدخال اليدوي.');
+      });
+    }catch(err){
+      console.error('QR init error',err);
+      setScanStatus('حدث خطأ في تشغيل قارئ QR. استخدم الإدخال اليدوي.');
+    }
+  };
+
+  window.scannerManualSubmit=function(){
+    const v=(document.getElementById('scannerManual')?.value||'').trim();
+    if(!v){ if(typeof toast==='function') toast('اكتب أو الصق الكود أولاً'); return; }
+    const cb=__qrCallback;
+    window.closeScanner();
+    if(cb) cb(v);
+  };
+
+  // More reliable product barcode scan.
+  window.scanProductBarcode=function(){
+    window.openScanner(function(code){
+      const el=document.getElementById('pb');
+      if(el) el.value=code;
+      if(typeof toast==='function') toast('✓ تم إدخال الباركود');
+    });
+  };
+})();
+</script>
+
+
+<script id="gaza-catalog-2026">
+(function(){
+  const GAZA_CATALOG_2026 = [
+    // name, main category, subcategory, unit, buy, sell, reorder, carton
+    ["أرز 1 كغ","مواد غذائية","أرز وحبوب","كغ",0,0,10,"كرتونة"],
+    ["أرز 5 كغ","مواد غذائية","أرز وحبوب","كيس",0,0,5,"كرتونة"],
+    ["سكر 1 كغ","مواد غذائية","سكر","كغ",0,0,10,"كرتونة"],
+    ["طحين 1 كغ","مواد غذائية","طحين","كغ",0,0,10,"كرتونة"],
+    ["طحين 25 كغ","مواد غذائية","طحين","كيس",0,0,3,"كيس"],
+    ["عدس 1 كغ","بقوليات","بقوليات","كغ",0,0,8,"كرتونة"],
+    ["حمص 1 كغ","بقوليات","بقوليات","كغ",0,0,8,"كرتونة"],
+    ["فاصوليا 1 كغ","بقوليات","بقوليات","كغ",0,0,8,"كرتونة"],
+    ["برغل 1 كغ","بقوليات","حبوب","كغ",0,0,8,"كرتونة"],
+    ["زيت نباتي 1 لتر","زيوت وخلطات","زيوت","لتر",0,0,8,"كرتونة"],
+    ["زيت زيتون 1 لتر","زيوت وخلطات","زيوت","لتر",0,0,5,"كرتونة"],
+    ["سمن 1 كغ","زيوت وخلطات","سمن","كغ",0,0,5,"كرتونة"],
+    ["ملح 1 كغ","مواد غذائية","أساسيات","كغ",0,0,10,"كرتونة"],
+    ["تونة 160غ","معلبات","تونة","حبة",0,0,24,"كرتونة"],
+    ["فول معلب","معلبات","بقوليات معلبة","حبة",0,0,24,"كرتونة"],
+    ["حمص معلب","معلبات","بقوليات معلبة","حبة",0,0,24,"كرتونة"],
+    ["صلصة طماطم","معلبات","صلصات","حبة",0,0,24,"كرتونة"],
+    ["حليب كامل الدسم 1 لتر","ألبان وأجبان","حليب","لتر",0,0,12,"كرتونة"],
+    ["حليب بودرة","ألبان وأجبان","حليب","كغ",0,0,6,"كرتونة"],
+    ["لبن","ألبان وأجبان","ألبان","علبة",0,0,12,"كرتونة"],
+    ["جبنة بيضاء","ألبان وأجبان","جبن","كغ",0,0,6,"كرتونة"],
+    ["بيض","ألبان وأجبان","بيض","كرتونة",0,0,6,"كرتونة"],
+    ["خبز كماج 1كغ","مخبوزات","خبز","حبة",0,0,24,"ربطة"],
+    ["خبز عربي","مخبوزات","خبز","ربطة",0,0,24,"ربطة"],
+    ["مياه 1.5 لتر","مشروبات","مياه","حبة",0,0,24,"كرتونة"],
+    ["مياه 500 مل","مشروبات","مياه","حبة",0,0,24,"كرتونة"],
+    ["عصير","مشروبات","عصائر","حبة",0,0,24,"كرتونة"],
+    ["مشروب غازي","مشروبات","غازيات","حبة",0,0,24,"كرتونة"],
+    ["شاي","مشروبات","شاي","علبة",0,0,10,"كرتونة"],
+    ["قهوة","مشروبات","قهوة","عبوة",0,0,10,"كرتونة"],
+    ["نسكافيه","مشروبات","قهوة","عبوة",0,0,8,"كرتونة"],
+    ["بطاطا","خضروات","خضار","كغ",0,0,20,"صندوق"],
+    ["طماطم","خضروات","خضار","كغ",0,0,20,"صندوق"],
+    ["بصل","خضروات","خضار","كغ",0,0,20,"شوال"],
+    ["خيار","خضروات","خضار","كغ",0,0,15,"صندوق"],
+    ["باذنجان","خضروات","خضار","كغ",0,0,15,"صندوق"],
+    ["ليمون","فواكه وخضروات","فواكه","كغ",0,0,10,"صندوق"],
+    ["تفاح","فواكه","فواكه","كغ",0,0,10,"صندوق"],
+    ["موز","فواكه","فواكه","كغ",0,0,10,"صندوق"],
+    ["برتقال","فواكه","فواكه","كغ",0,0,10,"صندوق"],
+    ["دجاج كامل","مجمدات","دواجن","كغ",0,0,10,"كرتونة"],
+    ["دجاج مجمد","مجمدات","دواجن","كغ",0,0,10,"كرتونة"],
+    ["لحمة مفرومة","لحوم","لحوم","كغ",0,0,5,"كرتونة"],
+    ["سمك","أسماك","أسماك","كغ",0,0,5,"صندوق"],
+    ["مسحوق غسيل 1كغ","منظفات","غسيل","عبوة",0,0,12,"كرتونة"],
+    ["سائل جلي","منظفات","جلي","لتر",0,0,12,"كرتونة"],
+    ["كلور","منظفات","تنظيف","لتر",0,0,12,"كرتونة"],
+    ["مناديل","منظفات","مناديل","علبة",0,0,12,"كرتونة"],
+    ["ورق تواليت","منظفات","مناديل","رول",0,0,24,"كرتونة"],
+    ["شامبو 400مل","عناية شخصية","شامبو","عبوة",0,0,12,"كرتونة"],
+    ["صابون","عناية شخصية","صابون","حبة",0,0,24,"كرتونة"],
+    ["معجون أسنان","عناية شخصية","أسنان","عبوة",0,0,12,"كرتونة"],
+    ["فرشاة أسنان","عناية شخصية","أسنان","حبة",0,0,12,"كرتونة"],
+    ["حفاضات أطفال","أطفال","حفاضات","حبة",0,0,12,"كرتونة"],
+    ["حفاضات مقاس 3","أطفال","حفاضات","حبة",0,0,12,"كرتونة"],
+    ["مناديل مبللة أطفال","أطفال","عناية أطفال","عبوة",0,0,12,"كرتونة"],
+    ["فوط صحية","عناية شخصية","نسائية","عبوة",0,0,12,"كرتونة"],
+    ["بطاريات AA","منزلية","بطاريات","حبة",0,0,12,"علبة"],
+    ["بطاريات AAA","منزلية","بطاريات","حبة",0,0,12,"علبة"],
+    ["لمبة LED","منزلية","إنارة","حبة",0,0,10,"كرتونة"],
+    ["شاحن هاتف","إلكترونيات","إكسسوارات","حبة",0,0,10,"علبة"],
+    ["سلك شحن USB","إلكترونيات","إكسسوارات","حبة",0,0,10,"علبة"],
+    ["كيس نايلون","منزلية","أكياس","حبة",0,0,100,"ربطة"],
+    ["علب حفظ طعام","منزلية","أدوات","حبة",0,0,10,"كرتونة"],
+    ["مياه غازية 330مل","مشروبات","غازيات","حبة",0,0,24,"كرتونة"],
+    ["بسكويت","سناكس","بسكويت","حبة",0,0,24,"كرتونة"],
+    ["شيبس","سناكس","شيبس","حبة",0,0,24,"كرتونة"],
+    ["شوكولاتة","سناكس","حلويات","حبة",0,0,24,"كرتونة"],
+    ["مربى","معلبات","مربى","مرطبان",0,0,8,"كرتونة"],
+    ["عسل","مواد غذائية","عسل","مرطبان",0,0,6,"كرتونة"],
+    ["مايونيز","صلصات","صلصات","عبوة",0,0,8,"كرتونة"],
+    ["كاتشب","صلصات","صلصات","عبوة",0,0,8,"كرتونة"],
+    ["خل","زيوت وخلطات","خل","لتر",0,0,8,"كرتونة"],
+    ["بهارات مشكلة","مواد غذائية","بهارات","عبوة",0,0,12,"كرتونة"],
+    ["كمون","مواد غذائية","بهارات","عبوة",0,0,12,"كرتونة"],
+    ["فلفل أسود","مواد غذائية","بهارات","عبوة",0,0,12,"كرتونة"],
+    ["مناديل مطبخ","منزلية","مناديل","رول",0,0,12,"كرتونة"],
+    ["أكياس قمامة","منزلية","أكياس","رول",0,0,12,"كرتونة"]
+  ];
+
+  window.GAZA_CATALOG_2026=GAZA_CATALOG_2026;
+
+  window.openGazaCatalog=function(){
+    let html=`
+      <div class="catalog-head">
+        <div class="card">
+          <b>🇵🇸 كتالوج أصناف غزة</b>
+          <p class="sub">كتالوج جاهز للأصناف الشائعة. الأسعار تُترك قابلة للتعديل لأن أسعار غزة تتغير بسرعة ولا توجد قائمة عامة موثوقة لكل صنف في كل سوق اليوم.</p>
+          <div style="padding:10px;border-radius:12px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);font-size:12px">
+            ⚠️ <b>مهم:</b> السعر = 0 يعني "غير مُسعّر". أدخل سعر السوق/المورد المحلي قبل اعتماد الصنف.
+          </div>
+        </div>
+      </div>
+      <div class="catalog-tools">
+        <input id="catSearch" class="input search" placeholder="ابحث عن صنف أو تصنيف..." oninput="filterCatalog()">
+        <button class="btn primary" onclick="importSelectedCatalog()">إضافة المحدد للمخزون</button>
+        <button class="btn" onclick="selectAllCatalog()">تحديد الكل</button>
+      </div>
+      <div id="catList" class="catalog-list"></div>`;
+    openModal('🇵🇸 كتالوج غزة',html);
+    renderCatalogItems(GAZA_CATALOG_2026);
+  };
+
+  window.renderCatalogItems=function(list){
+    const root=document.getElementById('catList');
+    if(!root)return;
+    root.innerHTML=list.map((p,i)=>`
+      <label class="card" style="display:flex;gap:10px;align-items:center;margin:8px 0;padding:12px;cursor:pointer">
+        <input type="checkbox" class="cat-check" data-i="${i}" style="width:22px;height:22px">
+        <div style="flex:1">
+          <b>${esc(p[0])}</b>
+          <div class="sub">${esc(p[1])} • ${esc(p[2])} • ${esc(p[3])}</div>
+        </div>
+        <div style="text-align:left">
+          <b>${p[5] ? Number(p[5]).toFixed(2)+' ₪' : 'غير مُسعّر'}</b>
+        </div>
+      </label>`).join('');
+  };
+
+  window.filterCatalog=function(){
+    const q=(document.getElementById('catSearch')?.value||'').trim().toLowerCase();
+    renderCatalogItems(GAZA_CATALOG_2026.filter(p=>p.join(' ').toLowerCase().includes(q)));
+  };
+
+  window.selectAllCatalog=function(){
+    document.querySelectorAll('.cat-check').forEach(x=>x.checked=true);
+  };
+
+  window.importSelectedCatalog=function(){
+    const checks=[...document.querySelectorAll('.cat-check:checked')];
+    if(!checks.length){toast('حدد صنفًا واحدًا على الأقل');return;}
+    let added=0;
+    checks.forEach(ch=>{
+      const i=Number(ch.dataset.i);
+      // Since filtering changes indices, find by rendered text is safer only for
+      // current full list; use the label text to match exact product.
+      const label=ch.closest('label');
+      const name=label?.querySelector('b')?.textContent?.trim();
+      const p=GAZA_CATALOG_2026.find(x=>x[0]===name);
+      if(!p)return;
+      if(db.products.some(x=>x.name===p[0]))return;
+      db.products.push({
+        id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
+        name:p[0], main:p[1], sub:p[2], unit:p[3],
+        cost:Number(p[4])||0, price:Number(p[5])||0,
+        qty:0, reorder:Number(p[6])||0, carton:Number(p[6])||0,
+        barcode:'', createdAt:new Date().toISOString()
+      });
+      added++;
+    });
+    save(); renderAll();
+    closeModal();
+    toast(`تمت إضافة ${added} صنف`);
+  };
+})();
+</script>
 
 </body>
 </html>
