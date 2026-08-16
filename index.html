@@ -224,6 +224,11 @@ button{cursor:pointer;transition:all 0.2s ease}
 <div class="card stat"><div class="lab">قيمة المخزون</div><div class="val" id="dStock">₪ 0</div><div class="sub" id="dProducts">0 صنف مسجل</div></div>
 <div class="card stat"><div class="lab">أرباح تقديرية</div><div class="val good" id="dProfit">₪ 0</div><div class="sub">من إجمالي المبيعات</div></div>
 </div>
+<div id="goalCard" class="section card" style="display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="margin:0">🏆 هدف مبيعات اليوم</h2><b id="goalPct" class="good"></b></div>
+<div class="bar" style="height:14px;border-radius:8px"><i id="goalBar" style="width:0%;border-radius:8px"></i></div>
+<p class="sub" style="margin-top:8px" id="goalText"></p>
+</div>
 <div class="section"><h2>اختصارات سريعة</h2><div class="quick">
 <button onclick="openSale()"><span>🧾</span><b>بيع جديد</b></button>
 <button onclick="openPurchase()"><span>🛒</span><b>شراء بضاعة</b></button>
@@ -247,7 +252,7 @@ button{cursor:pointer;transition:all 0.2s ease}
 
 <!-- INVENTORY -->
 <section id="inventory" class="page"><div class="top"><div><h1>المخزون والأصناف (بالحبة، العلبه، الكيلو، اللتر...)</h1><p>إدارة المنتجات وتحديد الوحدات الرئيسية والفرعية وأسعارها بدقة</p></div><div class="actions"><button class="btn" onclick="inventoryAdjust()">تسوية جرد</button><button class="btn" onclick="openGazaCatalog()">🇵🇸 كتالوج غزة</button><button class="btn primary" onclick="openProduct()">+ صنف جديد</button></div></div>
-<div class="toolbar"><input id="iq" class="input search" placeholder="بحث باسم الصنف، الباركود، أو التصنيف الرئيسي/الفرعي..." oninput="renderInventory()"><button class="btn" onclick="scanBarcode()">📷 باركود</button></div>
+<div class="toolbar"><input id="iq" class="input search" placeholder="بحث باسم الصنف، الباركود، أو التصنيف الرئيسي/الفرعي..." oninput="renderInventory()"><button class="btn" onclick="scanBarcode()">📷 باركود</button><button class="btn" onclick="openQuickCount()">📦 جرد سريع</button></div>
 <div class="card table-wrap"><table class="table"><thead><tr><th>الصنف</th><th>التصنيف الرئيسي / الفرعي</th><th>الوحدة</th><th>الكمية</th><th>شراء</th><th>بيع</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inventoryT"></tbody></table></div></section>
 
 <!-- CUSTOMERS -->
@@ -268,6 +273,11 @@ button{cursor:pointer;transition:all 0.2s ease}
 <div class="toolbar"><select id="period" class="input" style="max-width:210px" onchange="renderReports()"><option value="all">كل الفترات</option><option value="month">هذا الشهر</option><option value="week">هذا الأسبوع</option><option value="today">اليوم</option></select></div>
 <div class="grid three"><div class="card"><div class="sub">إجمالي المبيعات</div><div class="kpi" id="rSales">₪ 0</div></div><div class="card"><div class="sub">إجمالي المشتريات</div><div class="kpi" id="rPur">₪ 0</div></div><div class="card"><div class="sub">إجمالي المصروفات</div><div class="kpi" id="rExp">₪ 0</div></div></div>
 <div class="section grid two"><div class="card"><h2>مبيعات آخر 7 أيام</h2><div id="chart" class="chart"></div></div><div class="card"><h2>ملخص صافي الأرباح</h2><div class="row"><span>إيراد المبيعات الكلي</span><b id="rr1">₪0</b></div><div class="row"><span>تكلفة البضاعة المباعة</span><b id="rr2">₪0</b></div><div class="row"><span>المصروفات التشغيلية</span><b id="rr3">₪0</b></div><div class="row"><strong>صافي الربح النهائي</strong><strong class="good" id="rr4">₪0</strong></div></div></div>
+<div class="section card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">📊 مقارنة الأسبوع الحالي بالأسبوع الماضي</h2><b id="weekDelta"></b></div>
+<div class="grid two">
+<div><div class="sub">هذا الأسبوع</div><div class="kpi" id="weekNow">₪0</div><div class="bar" style="margin-top:8px"><i id="weekNowBar" style="width:0%"></i></div></div>
+<div><div class="sub">الأسبوع الماضي</div><div class="kpi" id="weekPrev">₪0</div><div class="bar" style="margin-top:8px"><i id="weekPrevBar" style="width:0%;background:var(--mut)"></i></div></div>
+</div></div>
 <div class="section card"><h2>الأصناف الأكثر مبيعاً</h2><div id="topProducts"></div></div></section>
 
 <!-- AUDIT -->
@@ -280,8 +290,16 @@ button{cursor:pointer;transition:all 0.2s ease}
 <div class="field"><label>اسم المالك</label><input id="so" class="input"></div>
 <div class="field"><label>العملة</label><select id="sc" class="input"><option>₪</option><option>$</option><option>JD</option><option>€</option></select></div>
 <div class="field"><label>حد التنبيه للمخزون</label><input id="sl" type="number" class="input"></div>
+<div class="field"><label>🏆 الهدف اليومي للمبيعات (اختياري)</label><input id="sgoal" type="number" min="0" class="input" placeholder="مثال: 1000"></div>
 <div class="field"><label>المظهر البصري</label><select id="themeSelect" class="input" onchange="setTheme(this.value)"><option value="dark">داكن (Dark Obsidian)</option><option value="light">فاتح (Clean Light)</option></select></div>
-</div><div class="modal-actions"><button class="btn primary" onclick="saveSettings()">حفظ التعديلات</button></div></div>
+</div><div class="modal-actions"><button class="btn primary" onclick="saveSettings()">حفظ التعديلات</button></div>
+<div class="section" style="margin-top:18px;padding-top:18px;border-top:1px solid var(--line)"><h2 style="margin-bottom:10px">🧾 شعار المحل على الفاتورة</h2>
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<div id="logoPreview" style="width:64px;height:64px;border-radius:14px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--card-glow)"></div>
+<label class="btn">⬆ رفع شعار<input type="file" accept="image/*" style="display:none" onchange="uploadLogo(event)"></label>
+<button class="btn danger" onclick="removeLogo()">إزالة الشعار</button>
+</div><p class="hint" style="margin-top:8px">يُفضّل صورة مربعة صغيرة (أقل من 300×300) لسرعة التحميل.</p></div>
+</div>
 <div class="section card"><h2>النسخ الاحتياطي وإدارة البيانات</h2><p class="sub">تصدير أو استيراد قاعدة البيانات بالكامل بصيغة JSON لضمان الأمان الكامل.</p><div class="actions" style="margin-top:12px"><button class="btn" onclick="backup()">⬇ تصدير نسخة احتياطية</button><label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="restore(event)"></label><button class="btn danger" onclick="resetData()">حذف وتصفير البيانات</button></div></div>
 </section>
 
@@ -324,12 +342,26 @@ button{cursor:pointer;transition:all 0.2s ease}
   </div>
  </div>
 </div>
+<div id="countModal" class="modalbg">
+ <div class="modal" style="max-width:460px">
+  <div class="mh"><h3>📦 جرد سريع بالكاميرا</h3><button class="close" onclick="closeQuickCount()">✕</button></div>
+  <div style="padding:16px">
+   <video id="countVideo" style="width:100%;border-radius:14px;background:#000;max-height:260px;object-fit:cover"></video>
+   <p id="countStatus" class="sub" style="margin-top:10px;text-align:center">وجّه الكاميرا على باركود كل صنف واحد ورا التاني — كل مسحة = وحدة واحدة</p>
+   <div id="countList" style="margin-top:12px;max-height:220px;overflow:auto"></div>
+   <div class="modal-actions">
+    <button class="btn" onclick="closeQuickCount()">إلغاء</button>
+    <button class="btn primary" onclick="applyQuickCount()">✔ اعتماد الجرد وتحديث المخزون</button>
+   </div>
+  </div>
+ </div>
+</div>
 <div id="toast" class="toast"></div>
 
 <script>
 const KEY='hesabi_pro_v3_units';
 let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
- settings:{business:'متجري الرئيسي',owner:'المالك',currency:'₪',low:5,theme:'dark'},
+ settings:{business:'متجري الرئيسي',owner:'المالك',currency:'₪',low:5,theme:'dark',dailyGoal:0,logo:''},
  products:[],customers:[],suppliers:[],sales:[],purchases:[],expenses:[],payments:[],audit:[],tasks:[],
  users:[{id:'u1',name:'المالك',role:'مدير'}]
 };
@@ -373,6 +405,14 @@ function renderDash(){
  let td=db.sales.filter(x=>x.date===today()),s=td.reduce((a,x)=>a+x.total,0),exp=db.expenses.filter(x=>x.date===today()).reduce((a,x)=>a+x.amount,0);
  let debt=db.customers.reduce((a,x)=>a+Math.max(0,x.balance),0),stock=db.products.reduce((a,x)=>a+x.qty*x.sell,0),profit=td.reduce((a,x)=>a+x.profit,0)-exp;
  dSales.textContent=money(s);dSalesN.textContent=td.length+' عملية بيع';dNet.textContent=money(s-exp);dDebt.textContent=money(debt);dStock.textContent=money(stock);dProducts.textContent=db.products.length+' صنف';dProfit.textContent=money(profit);
+ let goal=Number(db.settings.dailyGoal)||0,goalCard=document.getElementById('goalCard');
+ if(goal>0&&goalCard){
+  goalCard.style.display='block';
+  let pct=Math.min(100,Math.round(s/goal*100));
+  document.getElementById('goalBar').style.width=pct+'%';
+  document.getElementById('goalPct').textContent=pct+'%';
+  document.getElementById('goalText').textContent=s>=goal?`تم تحقيق الهدف! 🎉 (${money(s)} من ${money(goal)})`:`${money(s)} من ${money(goal)} — باقي ${money(goal-s)} للوصول للهدف`;
+ }else if(goalCard){goalCard.style.display='none';}
  let arr=[...db.sales.map(x=>({...x,k:'بيع',a:x.total})),...db.purchases.map(x=>({...x,k:'شراء',a:x.total})),...db.expenses.map(x=>({...x,k:'مصروف',a:x.amount}))].sort((a,b)=>(b.created||b.date).localeCompare(a.created||a.date)).slice(0,6);
  recent.innerHTML=arr.length?arr.map(x=>`<div class="row"><div><b>${esc(x.k)}</b><div class="sub">${esc(x.customerName||x.supplier||x.name||'')}</div></div><strong class="${x.k==='بيع'?'good':'bad'}">${x.k==='بيع'?'+':'-'} ${money(x.a)}</strong></div>`).join(''):'<div class="empty">لا توجد عمليات مسجلة حديثاً</div>';
  let low=db.products.filter(p=>p.qty<=Number(p.low||db.settings.low)).sort((a,b)=>a.qty-b.qty).slice(0,6);
@@ -431,6 +471,17 @@ function renderReports(){
  let m={};s.forEach(x=>x.items?.forEach(i=>m[i.name]=(m[i.name]||0)+i.qty));
  let top=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,7),max=top[0]?.[1]||1;
  topProducts.innerHTML=top.length?top.map(x=>`<div style="margin:12px 0"><div style="display:flex;justify-content:space-between"><b>${esc(x[0])}</b><span>${x[1]} وحدة</span></div><div class="bar" style="margin-top:6px"><i style="width:${x[1]/max*100}%"></i></div></div>`).join(''):'<div class="empty">لا توجد بيانات مبيعات كافية للتحليل</div>'
+ let now=new Date(),startThis=new Date(now);startThis.setDate(now.getDate()-now.getDay());startThis.setHours(0,0,0,0);
+ let startPrev=new Date(startThis);startPrev.setDate(startThis.getDate()-7);
+ let inRange=(d,a,b)=>{let t=new Date(d).getTime();return t>=a.getTime()&&t<b.getTime();};
+ let wNow=db.sales.filter(x=>inRange(x.date,startThis,new Date(startThis.getTime()+7*86400000))).reduce((a,x)=>a+x.total,0);
+ let wPrev=db.sales.filter(x=>inRange(x.date,startPrev,startThis)).reduce((a,x)=>a+x.total,0);
+ weekNow.textContent=money(wNow);weekPrev.textContent=money(wPrev);
+ let wmax=Math.max(1,wNow,wPrev);
+ weekNowBar.style.width=(wNow/wmax*100)+'%';weekPrevBar.style.width=(wPrev/wmax*100)+'%';
+ let delta=weekDelta;
+ if(wPrev===0){delta.textContent=wNow>0?'جديد 🎉':'';delta.className='';}
+ else{let pct=Math.round((wNow-wPrev)/wPrev*100);delta.textContent=(pct>=0?'▲ +':'▼ ')+pct+'%';delta.className=pct>=0?'good':'bad';}
 }
 
 function renderAudit(){
@@ -438,13 +489,26 @@ function renderAudit(){
 }
 
 function loadSettings(){
- sb.value=db.settings.business;so.value=db.settings.owner;sc.value=db.settings.currency;sl.value=db.settings.low;themeSelect.value=db.settings.theme||'dark';
+ sb.value=db.settings.business;so.value=db.settings.owner;sc.value=db.settings.currency;sl.value=db.settings.low;themeSelect.value=db.settings.theme||'dark';sgoal.value=db.settings.dailyGoal||0;
+ renderLogoPreview();
 }
 
 function saveSettings(){
- db.settings={...db.settings,business:sb.value||'متجري',owner:so.value,currency:sc.value,low:Number(sl.value)||5,theme:themeSelect.value};
+ db.settings={...db.settings,business:sb.value||'متجري',owner:so.value,currency:sc.value,low:Number(sl.value)||5,theme:themeSelect.value,dailyGoal:Number(sgoal.value)||0};
  log('تعديل الإعدادات','تحديث إعدادات المتجر والعملة');save();renderAll();toast('تم حفظ الإعدادات بنجاح');
 }
+function renderLogoPreview(){
+ let el=document.getElementById('logoPreview');if(!el)return;
+ el.innerHTML=db.settings.logo?`<img src="${db.settings.logo}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut)">لا يوجد</span>';
+}
+function uploadLogo(e){
+ let file=e.target.files[0];if(!file)return;
+ if(file.size>1500000){toast('الصورة كبيرة، اختر صورة أصغر من 1.5MB');return;}
+ let r=new FileReader();
+ r.onload=ev=>{db.settings.logo=ev.target.result;save();renderLogoPreview();toast('تم رفع الشعار بنجاح');};
+ r.readAsDataURL(file);
+}
+function removeLogo(){db.settings.logo='';save();renderLogoPreview();toast('تم إزالة الشعار');}
 
 function normalizeProduct(p){
  p={id:'',name:'',sku:'',barcode:'',cat:'',subcat:'',unit:'حبة',qty:0,buy:0,sell:0,low:db.settings.low,packUnit:'كرتونة',packSize:1,packBuy:0,packSell:0,...p};
@@ -457,7 +521,7 @@ function productDisplay(p){p=normalizeProduct(p);return p.packSize>1?`${p.name} 
 function openProduct(p={}){
  p=normalizeProduct(p);
  openModal(p.id?'تعديل صنف':'إضافة صنف جديد',`<div class="form">
- <div class="field full"><label>اسم الصنف</label><input id="pn" class="input" value="${esc(p.name)}"></div>
+ <div class="field full"><label>اسم الصنف</label><div style="display:flex;gap:8px"><input id="pn" class="input" value="${esc(p.name)}"><button type="button" class="btn" style="flex-shrink:0" onclick="voiceFillName()">🎤</button></div></div>
  <div class="field"><label>التصنيف الرئيسي</label><select id="pcat" class="input">${['مواد غذائية','مشروبات','شوكولاتة وحلويات','ألبان وأجبان','معلبات','بقوليات وأرز','مخبوزات','مجمدات','منظفات','عناية شخصية','أطفال','أدوات منزلية','قرطاسية','أخرى'].map(x=>`<option ${p.cat===x?'selected':''}>${x}</option>`).join('')}</select></div>
  <div class="field"><label>التصنيف الفرعي</label><input id="psub" class="input" value="${esc(p.subcat)}"></div>
  <div class="field"><label>وحدة البيع الأساسية</label><select id="punit" class="input">${['حبة','علبة','كيلو','لتر','درزن','متر','كيس','باكيت','ربطة','عبوة'].map(x=>`<option ${p.unit===x?'selected':''}>${x}</option>`).join('')}</select></div>
@@ -713,6 +777,7 @@ function saveExpense(){
 function viewInvoice(id){
  let x=db.sales.find(s=>s.id===id);if(!x)return;
  openModal('معاينة فاتورة: '+x.code,`<div style="text-align:center;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px">
+ ${db.settings.logo?`<img src="${db.settings.logo}" style="width:56px;height:56px;object-fit:cover;border-radius:14px;margin-bottom:8px">`:''}
  <h3>${esc(db.settings.business)}</h3><p class="sub">فاتورة مبيعات ${x.type} — ${fmt(x.date)}</p>
  </div>
  <div class="row"><span>العميل:</span><b>${esc(x.customerName)}</b></div>
@@ -871,6 +936,19 @@ function scanProductBarcode(){
  openScanner(code=>{ document.getElementById('pb').value=code; toast('تم تعبئة الباركود'); });
 }
 
+function voiceFillName(){
+ let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){toast('التعرف الصوتي غير مدعوم في هذا المتصفح، جرّب Chrome');return;}
+ let rec=new SR();rec.lang='ar-SA';rec.interimResults=false;rec.maxAlternatives=1;
+ toast('🎤 اتكلم دلوقتي...');
+ rec.onresult=e=>{
+  let text=e.results[0][0].transcript.trim();
+  let el=document.getElementById('pn');if(el){el.value=text;toast('تم: '+text);}
+ };
+ rec.onerror=()=>{toast('تعذر التعرف على الصوت. تأكد من اتصال الإنترنت وإذن الميكروفون.');};
+ rec.start();
+}
+
 function scanSaleItem(){
  openScanner(code=>{
   let p=db.products.find(x=>x.barcode&&x.barcode===code);
@@ -887,6 +965,59 @@ function renderInvoiceQR(text){
  let c=document.getElementById('invQR');
  if(!c||typeof QRCode==='undefined')return;
  QRCode.toCanvas(c,text,{width:150,margin:1,color:{dark:'#0F1A16',light:'#FFFFFF'}},function(err){ if(err)console.error(err); });
+}
+
+/* ============================================================
+   وضع الجرد السريع — مسح متتالي بالكاميرا لعدّ المخزون
+   ============================================================ */
+let countReader=null, countSession={}, countLastScan={code:'',time:0};
+
+function openQuickCount(){
+ countSession={};
+ document.getElementById('countList').innerHTML='<p class="sub" style="text-align:center">لسه ماتمش مسح أي صنف</p>';
+ document.getElementById('countStatus').textContent='جاري تشغيل الكاميرا...';
+ document.getElementById('countModal').classList.add('show');
+ if(typeof ZXing==='undefined'){
+  document.getElementById('countStatus').textContent='تعذر تحميل مكتبة المسح. تأكد من اتصالك بالإنترنت أول مرة.';
+  return;
+ }
+ countReader=new ZXing.BrowserMultiFormatReader();
+ countReader.listVideoInputDevices().then(devices=>{
+  if(!devices||!devices.length){document.getElementById('countStatus').textContent='لا توجد كاميرا متاحة على هذا الجهاز.';return;}
+  let backCam=devices.find(d=>/back|rear|environment/i.test(d.label))||devices[devices.length-1];
+  countReader.decodeFromVideoDevice(backCam.deviceId,'countVideo',(result)=>{
+   if(!result)return;
+   let code=result.getText(),now=Date.now();
+   if(code===countLastScan.code&&now-countLastScan.time<1500)return; // منع تكرار نفس المسحة
+   countLastScan={code,time:now};
+   registerCountScan(code);
+  }).catch(()=>{document.getElementById('countStatus').textContent='تعذر تشغيل الكاميرا. تأكد من إعطاء إذن الوصول للكاميرا.';});
+ }).catch(()=>{document.getElementById('countStatus').textContent='تعذر الوصول للكاميرا.';});
+}
+function registerCountScan(code){
+ let p=db.products.find(x=>x.barcode&&x.barcode===code);
+ if(!p){toast('⚠ باركود غير مسجل: '+code);return;}
+ if(!countSession[p.id])countSession[p.id]={name:p.name,unit:p.unit,current:p.qty,count:0};
+ countSession[p.id].count++;
+ renderCountList();
+}
+function renderCountList(){
+ let entries=Object.values(countSession);
+ document.getElementById('countList').innerHTML=entries.length?entries.map(e=>`<div class="row"><span>${esc(e.name)}</span><b class="good">${e.count} ${esc(e.unit||'حبة')}</b></div>`).join(''):'<p class="sub" style="text-align:center">لسه ماتمش مسح أي صنف</p>';
+ document.getElementById('countStatus').textContent=entries.length?`تم مسح ${entries.length} صنف مختلف — استمر أو اعتمد الجرد`:'وجّه الكاميرا على باركود كل صنف واحد ورا التاني — كل مسحة = وحدة واحدة';
+}
+function closeQuickCount(){
+ document.getElementById('countModal').classList.remove('show');
+ if(countReader){try{countReader.reset();}catch(e){} countReader=null;}
+}
+function applyQuickCount(){
+ let ids=Object.keys(countSession);
+ if(!ids.length){toast('لم يتم مسح أي صنف بعد');return;}
+ ids.forEach(id=>{
+  let p=db.products.find(x=>x.id===id),e=countSession[id];
+  if(p){log('تسوية جرد سريع',p.name+' من '+p.qty+' إلى '+e.count);p.qty=e.count;}
+ });
+ save();closeQuickCount();renderAll();toast(`تم تحديث ${ids.length} صنف بنجاح`);
 }
 
 window.onload=renderAll;
@@ -950,6 +1081,11 @@ function enterApp(user, expires_at, offline){
   box.innerHTML = `👤 <b>${esc(user.email)}</b><br>` +
    (days!==null ? `الاشتراك ينتهي خلال <b>${days}</b> يوم<br>` : '') +
    `<button class="btn danger" style="margin-top:8px;padding:6px 10px;width:100%" onclick="doLogout()">تسجيل خروج</button>`;
+ }
+ if(!window.__shortcutHandled){
+  window.__shortcutHandled=true;
+  let params=new URLSearchParams(location.search);
+  if(params.get('action')==='pos') setTimeout(()=>openPOS(),300);
  }
 }
 
