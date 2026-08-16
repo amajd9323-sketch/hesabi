@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <title>حسابي Pro — نظام إدارة الأعمال الذكي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg: #070D0B;
@@ -43,6 +44,16 @@
 html,body{margin:0;background:var(--bg);color:var(--txt);font-family:'Readex Pro','Cairo',sans-serif;transition:background 0.3s, color 0.3s}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer;transition:all 0.2s ease}
+
+.authWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;z-index:999}
+.authCard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:32px 28px;width:100%;max-width:380px;text-align:center;animation:fadeIn 0.4s ease}
+.authCard h2{margin:0 0 4px}
+.authCard .sub{color:var(--mut);font-size:13px;margin:0 0 18px;line-height:1.6}
+.authCard .field{text-align:right;margin-bottom:12px}
+.authError{color:var(--bad);font-size:13px;min-height:18px;margin-top:4px}
+.acctBox{margin-top:12px;background:var(--card-glow);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:12px;line-height:1.8;color:var(--mut)}
+.acctBox b{color:var(--txt)}
+.offlineBanner{background:var(--warn);color:#1a1400;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:12px;margin:0 0 16px}
 
 .app{display:flex;max-width:1480px;margin:auto;min-height:100vh}
 .side{width:270px;background:var(--card);border-left:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-shadow: var(--sh)}
@@ -145,7 +156,39 @@ button{cursor:pointer;transition:all 0.2s ease}
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- ===== شاشات تسجيل الدخول والاشتراك ===== -->
+<div id="authLoading" class="authWrap" style="display:flex">
+  <div class="authCard">
+    <div class="logo" style="width:56px;height:56px;font-size:26px;margin:0 auto 14px">ح</div>
+    <p class="sub" style="margin:0">جاري التحقق من الاشتراك...</p>
+  </div>
+</div>
+
+<div id="authLogin" class="authWrap" style="display:none">
+  <form id="loginForm" class="authCard">
+    <div class="logo" style="width:56px;height:56px;font-size:26px;margin:0 auto 14px">ح</div>
+    <h2>حسابي Pro</h2>
+    <p class="sub">سجّل الدخول بحسابك للمتابعة</p>
+    <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email" class="input" required autocomplete="username"></div>
+    <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password" class="input" required autocomplete="current-password"></div>
+    <div id="loginError" class="authError"></div>
+    <button id="loginBtn" type="submit" class="btn primary" style="width:100%;margin-top:10px">دخول</button>
+  </form>
+</div>
+
+<div id="authBlocked" class="authWrap" style="display:none">
+  <div class="authCard">
+    <div style="font-size:40px;margin-bottom:6px">⛔</div>
+    <h2>الاشتراك غير متاح</h2>
+    <p id="blockedMsg" class="sub"></p>
+    <p id="blockedExpiry" class="sub"></p>
+    <button class="btn danger" style="width:100%;margin-top:6px" onclick="doLogout()">تسجيل خروج</button>
+  </div>
+</div>
+<!-- ===== نهاية شاشات الدخول ===== -->
+
+<div class="app" id="appRoot" style="display:none">
 <aside class="side">
 <div class="brand"><div class="logo">ح</div><div><b>حسابي Pro</b><small>إدارة الأعمال الذكية</small></div></div>
 <nav class="nav">
@@ -162,9 +205,11 @@ button{cursor:pointer;transition:all 0.2s ease}
 <button data-page="more"><span class="ico">✨</span> أدوات إضافية</button>
 </nav>
 <div class="sidebox">🔒 <b>النظام المحلي الآمن</b><br>تعمل البيانات بالكامل بدون إنترنت.<br><span id="net" style="color:var(--good)">● متصل وجاهز</span></div>
+<div id="acctBox" class="acctBox"></div>
 </aside>
 
 <main class="main">
+<div id="offlineBanner" class="offlineBanner" style="display:none">⚠ وضع عدم اتصال — يعمل التطبيق من آخر تحقق ناجح من الاشتراك</div>
 <div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">حسابي Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
 
 <!-- DASHBOARD -->
@@ -749,6 +794,124 @@ function exportCSV(type){toast('جاري تحضير ملف CSV...');}
 function openPOS(){go('sales');openSale();}
 
 window.onload=renderAll;
+</script>
+
+<script>
+/* ============================================================
+   نظام تسجيل الدخول والتحقق من الاشتراك عبر Supabase
+   ============================================================
+   1) روح لإعدادات مشروعك في Supabase: Settings → API Keys
+      وانسخ من هناك "Project URL" و "Publishable key" (anon key)
+      وحطهم مكان القيم تحت.
+   2) لازم يكون عندك جدول subscriptions بالشكل ده (متطابق مع اللي عملته):
+      id uuid references auth.users primary key,
+      email text, is_active boolean, expires_at timestamptz
+      + RLS policy تسمح للمستخدم يقرأ صف نفسه بس (auth.uid() = id)
+   3) لازم تنشئ مستخدم لكل عميل من Authentication → Users في Supabase
+      (بإيميل وباسورد)، وتضيف له صف في subscriptions بنفس الـ id.
+   ============================================================ */
+
+const SUPABASE_URL = 'https://aburwotarmzycgbfqkle.supabase.co';   // ✅ متعبّى
+const SUPABASE_ANON_KEY = 'sb_publishable_XxnQi7epJ6rV-h1o3mcq1g_RymFo3US';   // ✅ متعبّى
+const OFFLINE_GRACE_DAYS = 3; // كام يوم يقدر يفتح التطبيق بدون نت بعد آخر تحقق ناجح
+const SUB_CACHE_KEY = 'hesabi_pro_sub_cache';
+
+const isConfigured = !SUPABASE_URL.includes('YOUR-PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR_PUBLISHABLE');
+const sbClient = isConfigured ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+function showScreen(name){
+ document.getElementById('authLoading').style.display = name==='loading' ? 'flex':'none';
+ document.getElementById('authLogin').style.display   = name==='login'   ? 'flex':'none';
+ document.getElementById('authBlocked').style.display = name==='blocked' ? 'flex':'none';
+ document.getElementById('appRoot').style.display     = name==='app'     ? 'flex':'none';
+}
+
+function saveSubCache(email,is_active,expires_at){
+ localStorage.setItem(SUB_CACHE_KEY, JSON.stringify({email,is_active,expires_at,checkedAt:Date.now()}));
+}
+function getSubCache(){
+ try{ return JSON.parse(localStorage.getItem(SUB_CACHE_KEY)); }catch(e){ return null; }
+}
+function isValidSub(is_active,expires_at){
+ return is_active===true && expires_at && new Date(expires_at).getTime()>Date.now();
+}
+function fmtDate(d){
+ try{ return new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'}); }catch(e){ return ''; }
+}
+
+function showBlocked(msg, expires_at){
+ showScreen('blocked');
+ document.getElementById('blockedMsg').textContent = msg;
+ document.getElementById('blockedExpiry').textContent = expires_at ? ('تاريخ الانتهاء: '+fmtDate(expires_at)) : '';
+}
+
+function enterApp(user, expires_at, offline){
+ showScreen('app');
+ document.getElementById('offlineBanner').style.display = offline ? 'block' : 'none';
+ const days = expires_at ? Math.max(0, Math.ceil((new Date(expires_at).getTime()-Date.now())/86400000)) : null;
+ const box = document.getElementById('acctBox');
+ if(box){
+  box.innerHTML = `👤 <b>${esc(user.email)}</b><br>` +
+   (days!==null ? `الاشتراك ينتهي خلال <b>${days}</b> يوم<br>` : '') +
+   `<button class="btn danger" style="margin-top:8px;padding:6px 10px;width:100%" onclick="doLogout()">تسجيل خروج</button>`;
+ }
+}
+
+async function verifyAndEnter(user, allowOfflineFallback){
+ try{
+  const {data, error} = await sbClient.from('subscriptions').select('is_active, expires_at').eq('id', user.id).maybeSingle();
+  if(error) throw error;
+  if(!data){ showBlocked('لا يوجد اشتراك مرتبط بهذا الحساب. تواصل مع الدعم لتفعيله.', null); return; }
+  saveSubCache(user.email, data.is_active, data.expires_at);
+  if(isValidSub(data.is_active, data.expires_at)) enterApp(user, data.expires_at, false);
+  else showBlocked('انتهى الاشتراك أو غير مُفعّل حالياً.', data.expires_at);
+ }catch(err){
+  if(allowOfflineFallback){
+   const cache = getSubCache();
+   if(cache && cache.email===user.email && isValidSub(cache.is_active, cache.expires_at)){
+    const daysSinceCheck = (Date.now()-cache.checkedAt)/86400000;
+    if(daysSinceCheck <= OFFLINE_GRACE_DAYS){ enterApp(user, cache.expires_at, true); return; }
+   }
+  }
+  showBlocked('تعذر التحقق من الاشتراك. تأكد من اتصالك بالإنترنت ثم أعد المحاولة.', null);
+ }
+}
+
+async function doLogout(){
+ if(sbClient) await sbClient.auth.signOut();
+ localStorage.removeItem(SUB_CACHE_KEY);
+ document.getElementById('loginEmail').value='';
+ document.getElementById('loginPass').value='';
+ showScreen('login');
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+ e.preventDefault();
+ const errBox = document.getElementById('loginError');
+ errBox.textContent='';
+ if(!sbClient){ errBox.textContent='⚠ لم يتم إعداد مفاتيح Supabase بعد في الكود.'; return; }
+ const email = document.getElementById('loginEmail').value.trim();
+ const pass = document.getElementById('loginPass').value;
+ const btn = document.getElementById('loginBtn');
+ btn.disabled=true; btn.textContent='جاري الدخول...';
+ const {data, error} = await sbClient.auth.signInWithPassword({email, password:pass});
+ btn.disabled=false; btn.textContent='دخول';
+ if(error){ errBox.textContent='بيانات الدخول غير صحيحة أو لا يوجد اتصال بالإنترنت.'; return; }
+ showScreen('loading');
+ await verifyAndEnter(data.user, false);
+});
+
+(async function initAuth(){
+ if(!sbClient){
+  showScreen('login');
+  document.getElementById('loginError').textContent='⚠ لم يتم إعداد Supabase بعد — عدّل SUPABASE_URL و SUPABASE_ANON_KEY داخل الكود.';
+  return;
+ }
+ showScreen('loading');
+ const {data:{session}} = await sbClient.auth.getSession();
+ if(session && session.user) await verifyAndEnter(session.user, true);
+ else showScreen('login');
+})();
 </script>
 </body>
 </html>
