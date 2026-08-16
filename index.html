@@ -8,6 +8,8 @@
 <title>حسابي Pro — نظام إدارة الأعمال الذكي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 <style>
 :root{
   --bg: #070D0B;
@@ -306,6 +308,22 @@ button{cursor:pointer;transition:all 0.2s ease}
 </nav>
 
 <div id="mb" class="modalbg"><div class="modal"><div class="mh"><h3 id="mt">إضافة</h3><button class="close" onclick="closeModal()">✕</button></div><div id="mc"></div></div></div>
+<div id="scannerModal" class="modalbg">
+ <div class="modal" style="max-width:420px">
+  <div class="mh"><h3>📷 مسح باركود / QR</h3><button class="close" onclick="closeScanner()">✕</button></div>
+  <div style="padding:16px;text-align:center">
+   <video id="scannerVideo" style="width:100%;border-radius:14px;background:#000;max-height:300px;object-fit:cover"></video>
+   <p id="scannerStatus" class="sub" style="margin-top:10px">جاري تشغيل الكاميرا...</p>
+   <div class="field" style="text-align:right;margin-top:10px">
+    <label>أو أدخل الكود يدوياً</label>
+    <div style="display:flex;gap:8px">
+     <input id="scannerManual" class="input" placeholder="اكتب الباركود هنا">
+     <button class="btn primary" onclick="scannerManualSubmit()">تأكيد</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
 <div id="toast" class="toast"></div>
 
 <script>
@@ -451,7 +469,7 @@ function openProduct(p={}){
  <div class="field"><label>شراء — ${p.packUnit}</label><input id="ppbuy" type="number" step="any" class="input" value="${p.packBuy}"></div>
  <div class="field"><label>بيع — ${p.packUnit}</label><input id="ppsell" type="number" step="any" class="input" value="${p.packSell}"></div>
  <div class="field"><label>حد التنبيه</label><input id="pl" type="number" step="any" class="input" value="${p.low}"></div>
- <div class="field"><label>الباركود أو الكود</label><input id="pb" class="input" value="${esc(p.barcode)}"></div>
+ <div class="field"><label>الباركود أو الكود</label><div style="display:flex;gap:8px"><input id="pb" class="input" value="${esc(p.barcode)}"><button type="button" class="btn" style="flex-shrink:0" onclick="scanProductBarcode()">📷</button></div></div>
  </div><div class="hint">مثال: شكلاطة، الوحدة الأساسية = حبة، الوحدة الكبيرة = كرتونة، داخل الكرتونة = 24 حبة. البيع بالحبة يخصم 1، والبيع بالكرتونة يخصم 24.</div><div class="modal-actions"><button class="btn primary" onclick="saveProduct('${p.id}')">حفظ الصنف</button></div>`);
 }
 function saveProduct(id){
@@ -464,7 +482,7 @@ function saveProduct(id){
 }
 
 function openSale(){
- openModal('إنشاء فاتورة بيع جديدة',`<div id="lines"></div><button class="btn soft" onclick="addLine()">+ إضافة صنف للفاتورة</button>
+ openModal('إنشاء فاتورة بيع جديدة',`<div id="lines"></div><div class="actions" style="margin-bottom:6px"><button class="btn soft" onclick="addLine()">+ إضافة صنف للفاتورة</button><button class="btn" onclick="scanSaleItem()">📷 مسح لإضافة صنف</button></div>
  <div class="form" style="margin-top:14px">
  <div class="field"><label>العميل</label><select id="scus" class="input"><option value="">نقدي (بدون عميل محدد)</option>${db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} — رصيد ${money(c.balance)}</option>`).join('')}</select></div>
  <div class="field"><label>طريقة الدفع</label><select id="stype" class="input"><option>نقدي</option><option>دين</option></select></div>
@@ -704,7 +722,9 @@ function viewInvoice(id){
  <div style="margin-top:14px;text-align:left">
  <h4>الإجمالي الكلي: ${money(x.total)}</h4>
  </div>
+ <div style="text-align:center;margin-top:14px"><canvas id="invQR"></canvas><p class="sub" style="margin-top:6px">امسح الكود للتأكد من تفاصيل الفاتورة</p></div>
  <div class="modal-actions"><button class="btn primary" onclick="window.print()">🖨 طباعة</button></div>`);
+ renderInvoiceQR(`فاتورة: ${x.code}\n${db.settings.business}\nالعميل: ${x.customerName}\nالتاريخ: ${x.date}\nالإجمالي: ${money(x.total)}`);
 }
 
 function viewPurchase(id){
@@ -789,9 +809,85 @@ function resetData(){
    localStorage.removeItem(KEY);location.reload();
  }
 }
-function scanBarcode(){toast('ميزة الباركود عبر الكاميرا تتطلب الاتصال بكاميرا الجهاز.');}
+function scanBarcode(){
+ openScanner(code=>{
+  document.getElementById('iq').value=code;
+  renderInventory();
+  let match=db.products.find(p=>p.barcode&&p.barcode===code);
+  toast(match?('تم العثور على: '+match.name):'لا يوجد صنف مطابق لهذا الباركود بعد');
+ });
+}
 function exportCSV(type){toast('جاري تحضير ملف CSV...');}
 function openPOS(){go('sales');openSale();}
+
+/* ============================================================
+   مسح الباركود / QR بالكاميرا (ZXing) + توليد QR للفاتورة (qrcode)
+   ============================================================ */
+let scannerReader=null, scannerCallback=null;
+
+function openScanner(onResult){
+ scannerCallback=onResult;
+ document.getElementById('scannerManual').value='';
+ document.getElementById('scannerStatus').textContent='جاري تشغيل الكاميرا...';
+ document.getElementById('scannerModal').classList.add('show');
+ if(typeof ZXing==='undefined'){
+  document.getElementById('scannerStatus').textContent='تعذر تحميل مكتبة المسح. تأكد من اتصالك بالإنترنت أول مرة.';
+  return;
+ }
+ scannerReader=new ZXing.BrowserMultiFormatReader();
+ scannerReader.listVideoInputDevices().then(devices=>{
+  if(!devices||!devices.length){
+   document.getElementById('scannerStatus').textContent='لا توجد كاميرا متاحة على هذا الجهاز. استخدم الإدخال اليدوي.';
+   return;
+  }
+  let backCam=devices.find(d=>/back|rear|environment/i.test(d.label))||devices[devices.length-1];
+  scannerReader.decodeFromVideoDevice(backCam.deviceId,'scannerVideo',(result,err)=>{
+   if(result){
+    document.getElementById('scannerStatus').textContent='تم المسح: '+result.getText();
+    let cb=scannerCallback;
+    closeScanner();
+    if(cb)cb(result.getText());
+   }
+  }).catch(()=>{
+   document.getElementById('scannerStatus').textContent='تعذر تشغيل الكاميرا. تأكد من إعطاء إذن الوصول للكاميرا، أو استخدم الإدخال اليدوي.';
+  });
+ }).catch(()=>{
+  document.getElementById('scannerStatus').textContent='تعذر الوصول للكاميرا. استخدم الإدخال اليدوي بالأسفل.';
+ });
+}
+function closeScanner(){
+ document.getElementById('scannerModal').classList.remove('show');
+ if(scannerReader){ try{scannerReader.reset();}catch(e){} scannerReader=null; }
+}
+function scannerManualSubmit(){
+ let v=document.getElementById('scannerManual').value.trim();
+ if(!v)return toast('اكتب كوداً أولاً');
+ let cb=scannerCallback;
+ closeScanner();
+ if(cb)cb(v);
+}
+
+function scanProductBarcode(){
+ openScanner(code=>{ document.getElementById('pb').value=code; toast('تم تعبئة الباركود'); });
+}
+
+function scanSaleItem(){
+ openScanner(code=>{
+  let p=db.products.find(x=>x.barcode&&x.barcode===code);
+  if(!p){ toast('لا يوجد صنف بهذا الباركود: '+code); return; }
+  addLine();
+  let rows=document.querySelectorAll('#lines .form'),row=rows[rows.length-1];
+  let sel=row.querySelector('.lp');sel.value=p.id;
+  updateSaleUnit(sel);calcSale();
+  toast('تمت إضافة: '+p.name);
+ });
+}
+
+function renderInvoiceQR(text){
+ let c=document.getElementById('invQR');
+ if(!c||typeof QRCode==='undefined')return;
+ QRCode.toCanvas(c,text,{width:150,margin:1,color:{dark:'#0F1A16',light:'#FFFFFF'}},function(err){ if(err)console.error(err); });
+}
 
 window.onload=renderAll;
 </script>
