@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070D0B">
 <link rel="manifest" href="manifest.webmanifest">
-<title>حسابي Pro — نظام إدارة الأعمال الذكي</title>
+<title>StoreFlow Pro — POS & Inventory Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js"></script>
@@ -158,7 +158,7 @@ button{cursor:pointer;transition:all 0.2s ease}
 </style>
 <style id="mobile-first-4">
 /* ============================================================
-   حسابي Pro — Mobile First 4.0
+   StoreFlow Pro — Mobile First 4.0
    ============================================================ */
 :root{
   --mobile-nav-h: 72px;
@@ -267,6 +267,13 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0f14">
+<meta name="description" content="StoreFlow Pro — Professional POS, inventory, sales and business management system.">
+<meta name="application-name" content="StoreFlow Pro">
+<meta name="product-license" content="Single Business License">
+<style id="storeflow-license-ui">
+.license-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card-glow);font-size:11px;color:var(--accent);font-weight:700}
+</style>
+
 
 
 <style id="gaza-price-note">
@@ -292,7 +299,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <div id="authLogin" class="authWrap" style="display:none">
   <form id="loginForm" class="authCard">
     <div class="logo" style="width:56px;height:56px;font-size:26px;margin:0 auto 14px">ح</div>
-    <h2>حسابي Pro</h2>
+    <h2>StoreFlow Pro</h2>
     <p class="sub">سجّل الدخول بحسابك للمتابعة</p>
     <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email" class="input" required autocomplete="username"></div>
     <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password" class="input" required autocomplete="current-password"></div>
@@ -314,7 +321,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 
 <div class="app" id="appRoot" style="display:none">
 <aside class="side">
-<div class="brand"><div class="logo">ح</div><div><b>حسابي Pro</b><small>إدارة الأعمال الذكية</small></div></div>
+<div class="brand"><div class="logo">ح</div><div><b>StoreFlow Pro</b><small>POS & Inventory Management</small></div></div>
 <nav class="nav">
 <button class="active" data-page="dashboard"><span class="ico">⚡</span> الرئيسية</button>
 <button data-page="sales"><span class="ico">🧾</span> المبيعات</button>
@@ -329,7 +336,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <button data-page="more"><span class="ico">✨</span> أدوات إضافية</button>
 </nav>
 <div class="sidebox">🔒 <b>النظام المحلي الآمن</b><br>تعمل البيانات بالكامل بدون إنترنت.<br><span id="net" style="color:var(--good)">● متصل وجاهز</span></div>
-<div id="acctBox" class="acctBox"></div>
+<div id="acctBox" class="acctBox"></div><div style="margin-top:8px"><span class="license-badge">✓ Licensed Product</span></div>
 </aside>
 
 
@@ -344,7 +351,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 
 <main class="main">
 <div id="offlineBanner" class="offlineBanner" style="display:none">⚠ وضع عدم اتصال — يعمل التطبيق من آخر تحقق ناجح من الاشتراك</div>
-<div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">حسابي Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
+<div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">StoreFlow Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="page active">
@@ -1577,5 +1584,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
 })();
 </script>
 
+<footer style="text-align:center;padding:18px;color:var(--mut);font-size:11px">StoreFlow Pro • Commercial Edition • Single Business License</footer>
 </body>
 </html>
