@@ -1264,61 +1264,101 @@ function calcPrice(){
  calcResult.textContent=money(c+(c*(m/100)));
 }
 
-function shareLastInvoice(){
+async function shareLastInvoice(){
  let last=db.sales[db.sales.length-1];
  if(!last) return toast('لا توجد مبيعات لمشاركتها');
- let txt=`فاتورة من ${db.settings.business}\nرقم: ${last.code}\nالعميل: ${last.customerName}\nالإجمالي: ${money(last.total)}\nشكراً لتعاملكم معنا!`;
+ let txt=`فاتورة من ${db.settings.business}\nرقم: ${last.code}\nالعميل: ${last.customerName||'نقدي'}\nالإجمالي: ${money(last.total)}\nشكراً لتعاملكم معنا!`;
  if(navigator.share){
-   navigator.share({title:'فاتورة',text:txt}).catch(()=>{});
- }else{
-   navigator.clipboard.writeText(txt);
-   toast('تم نسخ تفاصيل الفاتورة للحافظة');
+   try{await navigator.share({title:'فاتورة',text:txt});toast('✅ تمت مشاركة الفاتورة');return;}catch(e){console.warn('share invoice',e);}
  }
+ try{
+   if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt);toast('✅ تم نسخ تفاصيل الفاتورة للحافظة');return;}
+ }catch(e){}
+ try{
+   const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✅ تم نسخ تفاصيل الفاتورة');
+ }catch(e){toast('تعذر المشاركة أو النسخ على هذا المتصفح');}
 }
 
 function clearAudit(){if(confirm('هل انت متأكد من مسح سجل العمليات؟')){db.audit=[];save();renderAudit();toast('تم مسح السجل');}}
 
-/* ✅ FIXED: backup() now appends the link to the DOM (mobile browsers otherwise
-   silently ignore clicks on detached <a> elements) and adds a native
-   Web Share fallback so phones can save straight to Files/Drive/WhatsApp. */
-function backup(){
- let data=JSON.stringify(db,null,2);
- let filename=`hesabi_pro_backup_${today()}.json`;
- let blob=new Blob([data],{type:'application/json'});
-
- if(navigator.canShare && navigator.share){
+/* ===== أدوات تنزيل/مشاركة موثوقة للهاتف والكمبيوتر ===== */
+async function downloadFileBlob(blob, filename, successMessage){
+  const url=URL.createObjectURL(blob);
   try{
-   const file=new File([blob],filename,{type:'application/json'});
-   if(navigator.canShare({files:[file]})){
-    navigator.share({files:[file],title:'نسخة احتياطية - حسابي Pro'})
-     .then(()=>toast('تمت مشاركة/حفظ النسخة الاحتياطية بنجاح'))
-     .catch(()=>{ /* المستخدم ألغى المشاركة، لا حاجة لرسالة خطأ */ });
-    return;
-   }
-  }catch(e){ /* المتابعة للتنزيل التقليدي */ }
- }
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    a.rel='noopener';
+    a.style.position='fixed';
+    a.style.left='-9999px';
+    a.style.opacity='0';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{try{a.remove()}catch(e){};URL.revokeObjectURL(url)},1500);
+    toast(successMessage);
+    return true;
+  }catch(err){
+    console.error('downloadFileBlob',err);
+    try{window.open(url,'_blank','noopener');toast('تم فتح الملف — احفظه من الصفحة الجديدة');}catch(e){toast('تعذر تنزيل الملف على هذا المتصفح');}
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
+    return false;
+  }
+}
 
- let url=URL.createObjectURL(blob);
- let a=document.createElement('a');
- a.href=url;a.download=filename;a.style.display='none';
- document.body.appendChild(a);
- a.click();
- setTimeout(()=>{ try{document.body.removeChild(a);}catch(e){} URL.revokeObjectURL(url); },1000);
- toast('تم تنزيل النسخة الاحتياطية بنجاح');
+/* نسخة احتياطية: مشاركة الهاتف أولاً، ثم تنزيل مباشر، مع عدم ابتلاع أخطاء المشاركة. */
+async function backup(){
+  try{
+    const data=JSON.stringify(db,null,2);
+    const filename=`hesabi_pro_backup_${today()}.json`;
+    const blob=new Blob([data],{type:'application/json;charset=utf-8'});
+
+    if(typeof File!=='undefined' && navigator.share){
+      try{
+        const file=new File([blob],filename,{type:'application/json'});
+        if(!navigator.canShare || navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:'نسخة احتياطية - حسابي Pro',text:'نسخة احتياطية لبيانات حسابي Pro'});
+          toast('✅ تمت مشاركة النسخة الاحتياطية');
+          return;
+        }
+      }catch(err){
+        /* إلغاء المشاركة أو عدم دعمها: ننتقل تلقائياً للتنزيل */
+        console.warn('Web Share backup fallback:',err);
+      }
+    }
+    await downloadFileBlob(blob,filename,'✅ تم تنزيل النسخة الاحتياطية');
+  }catch(err){
+    console.error('backup',err);
+    toast('❌ تعذر إنشاء النسخة الاحتياطية');
+  }
 }
 function restore(e){
  let file=e.target.files[0];if(!file)return;
- let r=new FileReader();r.onload=ev=>{
+ let r=new FileReader();
+ r.onerror=()=>toast('❌ تعذر قراءة ملف النسخة الاحتياطية');
+ r.onload=ev=>{
    try{
-     db=JSON.parse(ev.target.result);save();renderAll();toast('تمت استعادة البيانات بنجاح');
-   }catch(err){toast('ملف غير صالح');}
+     const incoming=JSON.parse(ev.target.result);
+     const required=['settings','products','customers','suppliers','sales','purchases','expenses','payments','audit','tasks'];
+     if(!incoming || typeof incoming!=='object' || required.some(k=>!Array.isArray(incoming[k]) && k!=='settings') || !incoming.settings){
+       throw new Error('invalid backup structure');
+     }
+     db={...db,...incoming,settings:{...db.settings,...incoming.settings}};
+     save();renderAll();toast('✅ تمت استعادة النسخة الاحتياطية بنجاح');
+   }catch(err){console.error('restore',err);toast('❌ ملف النسخة الاحتياطية غير صالح');}
  };
  r.readAsText(file);
- e.target.value=''; // ✅ يسمح باختيار نفس الملف مرة أخرى لاحقاً
+ e.target.value='';
 }
 function resetData(){
  if(confirm('تحذير: سيتم حذف كافة البيانات المسجلة نهائياً! هل تريد الاستمرار؟')){
-   localStorage.removeItem(KEY);location.reload();
+   try{
+     localStorage.removeItem(KEY);
+     localStorage.removeItem('hesabi_pro_v2_workspace');
+     localStorage.removeItem('hesabi_pro_v2_demo');
+     localStorage.removeItem('hesabi_market_prices_v2');
+     localStorage.removeItem('hesabi_sub_cache_v1');
+   }catch(e){console.warn(e)}
+   location.reload();
  }
 }
 function scanBarcode(){
@@ -1329,7 +1369,39 @@ function scanBarcode(){
   toast(match?('تم العثور على: '+match.name):'لا يوجد صنف مطابق لهذا الباركود بعد');
  });
 }
-function exportCSV(type){toast('جاري تحضير ملف CSV...');}
+function exportCSV(type){
+  try{
+    const rows=[];
+    if(type==='sales'){
+      rows.push(['رقم الفاتورة','العميل','التاريخ','النوع','الإجمالي','الربح']);
+      db.sales.forEach(x=>rows.push([x.code,x.customerName||'نقدي',x.date,x.type||'',Number(x.total||0),Number(x.profit||0)]));
+    }else if(type==='purchases'){
+      rows.push(['رقم الشراء','المورد','التاريخ','النوع','الإجمالي']);
+      db.purchases.forEach(x=>rows.push([x.code,x.supplier||'',x.date,x.type||'',Number(x.total||0)]));
+    }else if(type==='inventory'){
+      rows.push(['الصنف','التصنيف','الوحدة','الكمية','سعر الشراء','سعر البيع','الباركود','SKU']);
+      db.products.forEach(x=>rows.push([x.name,x.cat||'',x.unit||'حبة',Number(x.qty||0),Number(x.buy||0),Number(x.sell||0),x.barcode||'',x.sku||'']));
+    }else if(type==='customers'){
+      rows.push(['العميل','الهاتف','الرصيد','آخر حركة']);
+      db.customers.forEach(x=>rows.push([x.name,x.phone||'',Number(x.balance||0),x.last||'']));
+    }else if(type==='expenses'){
+      rows.push(['المصروف','التصنيف','التاريخ','المبلغ']);
+      db.expenses.forEach(x=>rows.push([x.name,x.cat||'',x.date,Number(x.amount||0)]));
+    }else{
+      toast('نوع التصدير غير معروف');
+      return;
+    }
+    const csv='\ufeff'+rows.map(row=>row.map(v=>{
+      const text=String(v??'');
+      return /[\",\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;
+    }).join(',')).join('\r\n');
+    const filename=`hesabi_pro_${type}_${today()}.csv`;
+    downloadFileBlob(new Blob([csv],{type:'text/csv;charset=utf-8'}),filename,'✅ تم تصدير ملف CSV');
+  }catch(err){
+    console.error('exportCSV',err);
+    toast('❌ تعذر تصدير الملف');
+  }
+}
 function openPOS(){go('sales');openSale();}
 
 /* ============================================================
