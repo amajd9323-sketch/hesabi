@@ -450,6 +450,15 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <button class="btn danger" onclick="removeLogo()">إزالة الشعار</button>
 </div><p class="hint" style="margin-top:8px">يُفضّل صورة مربعة صغيرة (أقل من 300×300) لسرعة التحميل.</p></div>
 </div>
+
+<!-- ✅ NEW: account/logout card, always visible (also on mobile) -->
+<div class="section card"><h2>👤 الحساب</h2>
+<div id="acctBoxMobile" class="acctBox" style="margin-top:8px"></div>
+<div class="modal-actions" style="justify-content:flex-start;margin-top:12px">
+  <button class="btn danger" style="width:100%" onclick="doLogout()">🚪 تسجيل خروج</button>
+</div>
+</div>
+
 <div class="section card"><h2>💳 حالة الخطة والاشتراك</h2><div id="planStatusBox" class="acctBox" style="margin-top:8px"></div><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="showPlans()">عرض الخطط</button><button class="btn" onclick="startDemoTrial()">🎁 تشغيل تجربة 3 أيام</button></div></div>
   <div class="section card"><h2>النسخ الاحتياطي وإدارة البيانات</h2><p class="sub">تصدير أو استيراد قاعدة البيانات بالكامل بصيغة JSON لضمان الأمان الكامل.</p><div class="actions" style="margin-top:12px"><button class="btn" onclick="backup()">⬇ تصدير نسخة احتياطية</button><label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="restore(event)"></label><button class="btn danger" onclick="resetData()">حذف وتصفير البيانات</button></div></div>
 </section>
@@ -465,6 +474,8 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <div class="card"><h2>📦 تقييم المخزون الشامل</h2><div class="row"><span>إجمالي قيمة الشراء</span><b id="stockBuyValue">₪0</b></div><div class="row"><span>إجمالي قيمة البيع</span><b id="stockSellValue">₪0</b></div><div class="row"><span>الأرباح المحتملة للمخزون</span><b class="good" id="stockPotential">₪0</b></div></div>
 <div class="card"><h2>📋 مهام المتجر</h2><div id="tasks" style="margin-top:10px"></div><button class="btn soft" style="margin-top:12px" onclick="addTask()">+ إضافة مهمة</button></div>
 </div>
+<!-- ✅ NEW: quick logout also reachable from "More" tab on mobile -->
+<div class="section card mobile-only"><h2>👤 الحساب</h2><button class="btn danger" style="width:100%;margin-top:8px" onclick="doLogout()">🚪 تسجيل خروج</button></div>
 </section>
 </main></div>
 
@@ -1007,9 +1018,34 @@ function shareLastInvoice(){
 }
 
 function clearAudit(){if(confirm('هل انت متأكد من مسح سجل العمليات؟')){db.audit=[];save();renderAudit();toast('تم مسح السجل');}}
+
+/* ✅ FIXED: backup() now appends the link to the DOM (mobile browsers otherwise
+   silently ignore clicks on detached <a> elements) and adds a native
+   Web Share fallback so phones can save straight to Files/Drive/WhatsApp. */
 function backup(){
- let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
- let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hesabi_pro_backup_${today()}.json`;a.click();
+ let data=JSON.stringify(db,null,2);
+ let filename=`hesabi_pro_backup_${today()}.json`;
+ let blob=new Blob([data],{type:'application/json'});
+
+ if(navigator.canShare && navigator.share){
+  try{
+   const file=new File([blob],filename,{type:'application/json'});
+   if(navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:'نسخة احتياطية - حسابي Pro'})
+     .then(()=>toast('تمت مشاركة/حفظ النسخة الاحتياطية بنجاح'))
+     .catch(()=>{ /* المستخدم ألغى المشاركة، لا حاجة لرسالة خطأ */ });
+    return;
+   }
+  }catch(e){ /* المتابعة للتنزيل التقليدي */ }
+ }
+
+ let url=URL.createObjectURL(blob);
+ let a=document.createElement('a');
+ a.href=url;a.download=filename;a.style.display='none';
+ document.body.appendChild(a);
+ a.click();
+ setTimeout(()=>{ try{document.body.removeChild(a);}catch(e){} URL.revokeObjectURL(url); },1000);
+ toast('تم تنزيل النسخة الاحتياطية بنجاح');
 }
 function restore(e){
  let file=e.target.files[0];if(!file)return;
@@ -1019,6 +1055,7 @@ function restore(e){
    }catch(err){toast('ملف غير صالح');}
  };
  r.readAsText(file);
+ e.target.value=''; // ✅ يسمح باختيار نفس الملف مرة أخرى لاحقاً
 }
 function resetData(){
  if(confirm('تحذير: سيتم حذف كافة البيانات المسجلة نهائياً! هل تريد الاستمرار؟')){
@@ -1231,10 +1268,15 @@ async function enterApp(user, expires_at, offline){
  document.getElementById('offlineBanner').style.display = offline ? 'block' : 'none';
  const days = expires_at ? Math.max(0, Math.ceil((new Date(expires_at).getTime()-Date.now())/86400000)) : null;
  const box = document.getElementById('acctBox');
+ const boxMobile = document.getElementById('acctBoxMobile'); // ✅ NEW
+ const infoHtml = `👤 <b>${esc(user.email)}</b><br>` +
+   (days!==null ? `الاشتراك ينتهي خلال <b>${days}</b> يوم<br>` : '');
  if(box){
-  box.innerHTML = `👤 <b>${esc(user.email)}</b><br>` +
-   (days!==null ? `الاشتراك ينتهي خلال <b>${days}</b> يوم<br>` : '') +
+  box.innerHTML = infoHtml +
    `<button class="btn danger" style="margin-top:8px;padding:6px 10px;width:100%" onclick="doLogout()">تسجيل خروج</button>`;
+ }
+ if(boxMobile){ // ✅ NEW: keep the settings-page account card in sync too
+  boxMobile.innerHTML = infoHtml;
  }
  if(!window.__shortcutHandled){
   window.__shortcutHandled=true;
