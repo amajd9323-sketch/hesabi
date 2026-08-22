@@ -337,6 +337,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <meta name="theme-color" content="#0b0f14">
 <meta name="description" content="حسابي Pro — Professional POS, inventory, sales and business management system.">
 <meta name="application-name" content="حسابي Pro">
+<meta name="mobile-ui-version" content="6.0">
 <meta name="product-license" content="Single Business License">
 <style id="hesabi-license-ui">
 .license-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card-glow);font-size:11px;color:var(--accent);font-weight:700}
@@ -385,6 +386,52 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
   .mobile-menu-backdrop{padding-bottom:calc(8px + var(--mobile-safe-bottom))}
   .mobile-menu-panel{max-height:calc(92dvh - var(--mobile-safe-bottom))}
   .mobile-menu-action{font-size:12px}
+}
+
+/* ============================================================
+   MOBILE V6 — NEW PHONE UI
+   زر واحد يفتح كل وظائف نسخة الكمبيوتر
+   ============================================================ */
+@media(max-width:700px){
+  /* إخفاء أي شريط/اختصارات هاتف قديمة */
+  #mobileQuickBar,.mobileQuickBar{display:none!important}
+  .bottom.mobile-v6{
+    display:grid!important;grid-template-columns:1fr 1fr 1fr!important;
+    position:fixed!important;left:10px!important;right:10px!important;bottom:calc(8px + var(--mobile-safe-bottom))!important;
+    width:auto!important;height:76px!important;padding:7px!important;
+    border:1px solid rgba(255,255,255,.12)!important;border-radius:24px!important;
+    background:rgba(12,15,20,.97)!important;backdrop-filter:blur(22px)!important;
+    box-shadow:0 16px 45px rgba(0,0,0,.45)!important;z-index:10000!important;
+  }
+  .mobile-v6 button{
+    position:relative!important;border:0!important;background:transparent!important;color:var(--mut)!important;
+    min-height:60px!important;height:60px!important;border-radius:18px!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    gap:3px!important;padding:4px!important;font-size:11px!important;font-weight:800!important;
+  }
+  .mobile-v6 button .ico{font-size:23px!important;line-height:1!important}
+  .mobile-v6 .mobile-home-btn{background:var(--card-glow)!important;color:var(--txt)!important}
+  .mobile-v6 .mobile-pos-btn{
+    transform:translateY(-10px)!important;height:72px!important;min-height:72px!important;
+    border-radius:22px!important;background:linear-gradient(135deg,var(--p),var(--p2))!important;color:#fff!important;
+    box-shadow:0 10px 30px rgba(16,185,129,.35)!important;border:1px solid transparent!important;
+  }
+  .mobile-v6 .mobile-pos-btn .ico{font-size:28px!important}
+  .mobile-v6 .mobile-all-btn{background:var(--card-glow)!important;color:var(--accent)!important;border:1px solid var(--accent)!important}
+  .mobile-menu-badge{
+    position:absolute!important;top:3px!important;right:15%!important;
+    min-width:20px;height:20px;padding:2px 5px;border-radius:99px;
+    background:var(--accent);color:#07110d;font-size:9px;display:flex;align-items:center;justify-content:center;
+  }
+  main,.main,.content{padding-bottom:calc(100px + var(--mobile-safe-bottom))!important}
+  .mobile-menu-panel{width:100%!important;border-radius:28px!important;padding:14px!important}
+  .mobile-menu-grid{grid-template-columns:repeat(3,1fr)!important;gap:8px!important}
+  .mobile-menu-item{min-height:86px!important;font-size:11px!important}
+  .mobile-menu-actions{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:380px){
+  .mobile-menu-grid{grid-template-columns:repeat(2,1fr)!important}
+  .mobile-menu-item{min-height:78px!important}
 }
 </style>
 </head>
@@ -577,12 +624,10 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 </section>
 </main></div>
 
-<nav class="bottom mobile-command-nav" aria-label="التنقل السريع">
-<button class="active" data-page="dashboard"><span class="ico">⌂</span><small>الرئيسية</small></button>
-<button data-page="sales"><span class="ico">🧾</span><small>المبيعات</small></button>
-<button class="mobile-pos-btn" onclick="openPOS()"><span class="ico">⚡</span><small>بيع سريع</small></button>
-<button data-page="inventory"><span class="ico">📦</span><small>المخزون</small></button>
-<button type="button" class="mobile-all-btn" onclick="toggleMobileMenu(true)" aria-label="كل الميزات"><span class="ico">☰</span><small>كل الميزات</small></button>
+<nav class="bottom mobile-command-nav mobile-v6" aria-label="تنقل الهاتف الجديد">
+  <button type="button" class="mobile-home-btn" onclick="mobileGo('dashboard')"><span class="ico">⌂</span><small>الرئيسية</small></button>
+  <button type="button" class="mobile-pos-btn" onclick="openPOS()"><span class="ico">⚡</span><small>بيع سريع</small></button>
+  <button type="button" class="mobile-all-btn" onclick="toggleMobileMenu(true)" aria-label="كل الميزات"><span class="ico">☰</span><small>كل الميزات</small><b class="mobile-menu-badge">11+</b></button>
 </nav>
 
 
@@ -631,6 +676,16 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
       <button class="mobile-menu-action" onclick="mobileAction(showPlans)">💳 الخطط والاشتراك</button>
       <button class="mobile-menu-action" onclick="mobileAction(setTheme, db.settings.theme==='dark'?'light':'dark')">🌓 تبديل المظهر</button>
       <button class="mobile-menu-action danger" onclick="mobileAction(doLogout)">🚪 تسجيل خروج</button>
+    </div>
+
+    <div class="mobile-menu-section">أدوات إضافية من نسخة الكمبيوتر</div>
+    <div class="mobile-menu-actions">
+      <button class="mobile-menu-action" onclick="mobileAction(openGazaCatalog)">🇵🇸 كتالوج غزة</button>
+      <button class="mobile-menu-action" onclick="mobileAction(inventoryAdjust)">📋 تسوية الجرد</button>
+      <button class="mobile-menu-action" onclick="mobileAction(exportCSV,'sales')">📤 تصدير المبيعات CSV</button>
+      <button class="mobile-menu-action" onclick="mobileAction(exportCSV,'purchases')">📤 تصدير المشتريات CSV</button>
+      <button class="mobile-menu-action" onclick="mobileAction(shareLastInvoice)">📲 مشاركة آخر فاتورة</button>
+      <button class="mobile-menu-action" onclick="mobileAction(clearAudit)">🧹 إدارة سجل العمليات</button>
     </div>
 
     <div class="mobile-menu-hint">💡 زر «كل الميزات» في الأسفل يفتح هذه اللوحة من أي صفحة. لن تحتاج إلى تمرير قائمة طويلة أو مساحة كبيرة للأزرار.</div>
