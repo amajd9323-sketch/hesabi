@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070D0B">
 <link rel="manifest" href="manifest.webmanifest">
-<title>حسابي Pro — POS & Inventory Management</title>
+<title>حسابي Pro — POS & Inventory Management — V11 Purchase System</title>
+<meta name="app-version" content="V9.1-PAYMENTS-CONTACT">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js"></script>
@@ -314,6 +315,24 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 }
 .mobile-menu-action.primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-color:transparent}
 .mobile-menu-action.danger{background:rgba(248,113,113,.12);color:var(--bad);border-color:rgba(248,113,113,.25)}
+
+.contact-purchase-card{margin-top:14px;background:linear-gradient(135deg,var(--card-glow),var(--card));border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px}
+.contact-purchase-card p{margin:5px 0 0;color:var(--mut);font-size:12px}
+.contact-actions{display:flex;gap:8px;flex-wrap:wrap}
+.payment-contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.payment-contact>div{background:var(--card-glow);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:5px}
+.payment-contact span{font-size:11px;color:var(--mut)}
+.payment-contact a{color:var(--accent);font-weight:800;text-decoration:none;direction:ltr;text-align:right}
+.payment-methods{display:grid;gap:10px;margin-top:14px}
+.payment-method-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px}.payment-method-card.primary-payment{border-color:var(--accent);box-shadow:0 0 0 1px rgba(16,185,129,.18),0 10px 28px rgba(16,185,129,.08);position:relative}.payment-method-card.primary-payment:before{content:"الأساسي";position:absolute;top:10px;left:10px;background:var(--accent);color:#001b12;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:900}
+.payment-method-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.payment-method-icon{width:38px;height:38px;border-radius:12px;background:var(--card-glow);display:grid;place-items:center;font-size:20px}
+.payment-method-head small{display:block;color:var(--mut);font-size:10px;margin-top:3px}
+.payment-code-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card-glow);border:1px dashed var(--line);border-radius:12px;padding:9px 10px}
+.payment-code-row span{font-weight:800;direction:rtl;word-break:break-word;font-size:12px}
+.payment-note{font-size:10px;color:var(--mut);margin-top:7px;line-height:1.6}
+@media(max-width:700px){.payment-contact{grid-template-columns:1fr}.contact-actions .btn{flex:1;min-width:130px}.payment-code-row{align-items:stretch;flex-direction:column}.payment-code-row .btn{width:100%}}
+
 .mobile-menu-hint{
   margin-top:12px;padding:10px 12px;border-radius:14px;
   background:var(--card-glow);color:var(--mut);font-size:11px;line-height:1.7;text-align:center;
@@ -462,7 +481,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 @media(min-width:701px){.mobile-command-nav.mobile-v6{display:none!important}}
 </style>
 </head>
-<body>
+<body><button type="button" id="globalPurchaseBtn" onclick="openPurchaseModal()" style="position:fixed;left:16px;bottom:18px;z-index:12000;border:0;border-radius:14px;padding:12px 16px;background:#24d66b;color:#06120a;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer">🛒 شراء النسخة</button>
 
 <!-- ===== شاشات تسجيل الدخول والاشتراك ===== -->
 <div id="authLoading" class="authWrap" style="display:flex">
@@ -563,8 +582,8 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 </section>
 
 <!-- SALES -->
-<section id="sales" class="page"><div class="top"><div><h1>المبيعات والفواتير</h1><p>إدارة فواتير البيع النقدية وبالدين مع دعم الوحدات المتعددة</p></div><div class="actions"><button class="btn" onclick="exportCSV('sales')">تصدير CSV</button><button class="btn primary" onclick="openSale()">+ بيع جديد</button></div></div>
-<div class="toolbar"><input id="sq" class="input search" placeholder="بحث برقم الفاتورة أو اسم العميل..." oninput="renderSales()"><select id="saleFilter" class="input" style="max-width:180px" onchange="renderSales()"><option value="">كل العمليات</option><option>نقدي</option><option>دين</option></select></div>
+<section id="sales" class="page"><div class="top"><div><h1>المبيعات والفواتير</h1><p>إدارة فواتير البيع والدفع الإلكتروني بالمحافظ والبنوك، مع دعم الدفع النقدي والدين</p></div><div class="actions"><button class="btn" onclick="exportCSV('sales')">تصدير CSV</button><button class="btn primary" onclick="openSale()">+ بيع جديد</button></div></div>
+<div class="toolbar"><input id="sq" class="input search" placeholder="بحث برقم الفاتورة أو اسم العميل..." oninput="renderSales()"><select id="saleFilter" class="input" style="max-width:180px" onchange="renderSales()"><option value="">كل العمليات</option><option>PalPay</option><option>Jawwal Pay</option><option>بنك فلسطين</option><option>نقدي</option><option>دين</option></select></div>
 <div class="card table-wrap"><table class="table"><thead><tr><th>الفاتورة</th><th>العميل</th><th>التاريخ</th><th>النوع</th><th>الإجمالي</th><th>الربح</th><th>الإجراءات</th></tr></thead><tbody id="salesT"></tbody></table></div></section>
 
 <!-- PURCHASES -->
@@ -700,7 +719,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
     <div class="mobile-menu-section">الحساب والنظام</div>
     <div class="mobile-menu-actions">
       <button class="mobile-menu-action" onclick="mobileAction(backup)">⬇ نسخة احتياطية</button>
-      <button class="mobile-menu-action" onclick="mobileAction(showPlans)">💳 الخطط والاشتراك</button>
+      <button class="mobile-menu-action" onclick="mobileAction(showPlans)">💳 الخطط والشراء</button>
       <button class="mobile-menu-action" onclick="mobileAction(setTheme, db.settings.theme==='dark'?'light':'dark')">🌓 تبديل المظهر</button>
       <button class="mobile-menu-action danger" onclick="mobileAction(doLogout)">🚪 تسجيل خروج</button>
     </div>
@@ -759,7 +778,8 @@ let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
  products:[],customers:[],suppliers:[],sales:[],purchases:[],expenses:[],payments:[],audit:[],tasks:[],
  users:[{id:'u1',name:'المالك',role:'مدير'}]
 };
-function save(){ const k=(window.__hesabiMode==='demo')?'hesabi_pro_v2_demo':'hesabi_pro_v2_workspace'; localStorage.setItem(k,JSON.stringify(db)); if(window.__hesabiMode!=='demo' && typeof window.__hesabiCloudSync==='function') window.__hesabiCloudSync(); }
+function workspaceKey(){ const uidPart = window.__hesabiCurrentUser?.id || 'guest'; return 'hesabi_pro_v2_workspace_'+uidPart; }
+function save(){ const k=(window.__hesabiMode==='demo')?'hesabi_pro_v2_demo':workspaceKey(); localStorage.setItem(k,JSON.stringify(db)); if(window.__hesabiMode!=='demo' && typeof window.__hesabiCloudSync==='function') window.__hesabiCloudSync(); }
 db.products=db.products.map(normalizeProduct);
 const cur=()=>db.settings.currency||'₪';
 const money=n=>cur()+' '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
@@ -970,7 +990,7 @@ function openSale(){
  openModal('إنشاء فاتورة بيع جديدة',`<div id="lines"></div><div class="actions" style="margin-bottom:6px"><button class="btn soft" onclick="addLine()">+ إضافة صنف للفاتورة</button><button class="btn" onclick="scanSaleItem()">📷 مسح لإضافة صنف</button></div>
  <div class="form" style="margin-top:14px">
  <div class="field"><label>العميل</label><select id="scus" class="input"><option value="">نقدي (بدون عميل محدد)</option>${db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} — رصيد ${money(c.balance)}</option>`).join('')}</select></div>
- <div class="field"><label>طريقة الدفع</label><select id="stype" class="input"><option>نقدي</option><option>دين</option></select></div>
+ <div class="field"><label>طريقة الدفع <span class="pill" style="margin-right:6px">💳 إلكتروني أساسي</span></label><select id="stype" class="input"><option selected>PalPay</option><option>Jawwal Pay</option><option>بنك فلسطين</option><option>نقدي</option><option>دين</option></select><div class="sub" style="margin-top:5px">المحفظة/البنك هو الخيار الأساسي للدفع. اختر «دين» فقط عند البيع الآجل.</div></div>
  <div class="field"><label>خصم إضافي</label><input id="disc" type="number" class="input" value="0" oninput="calcSale()"></div>
  <div class="field"><label>ملاحظات</label><input id="snote" class="input"></div>
  </div><div class="card" style="margin-top:14px"><b>الإجمالي النهائي: <span id="stotal" class="good">${money(0)}</span></b></div>
@@ -1001,20 +1021,21 @@ function calcSale(){
  let dis=Number(disc?.value)||0;stotal.textContent=money(Math.max(0,total-dis));
 }
 function saveSale(){
- let items=[],ok=true;
- document.querySelectorAll('#lines .form').forEach(x=>{let v=saleLineValues(x);if(v.p&&v.q){if(v.baseQty>v.p.qty)ok=false;items.push({productId:v.p.id,name:v.p.name+' ('+(v.mode==='pack'?v.p.packUnit:v.p.unit)+')',qty:v.q,baseQty:v.baseQty,unit:v.mode==='pack'?v.p.packUnit:v.p.unit,price:v.price,buy:v.buy});}});
+ let items=[],ok=true,unpriced=[];
+ document.querySelectorAll('#lines .form').forEach(x=>{let v=saleLineValues(x);if(v.p&&v.q){if(v.baseQty>v.p.qty)ok=false;if(!v.price||v.price<=0){unpriced.push(v.p.name);return;}items.push({productId:v.p.id,name:v.p.name+' ('+(v.mode==='pack'?v.p.packUnit:v.p.unit)+')',qty:v.q,baseQty:v.baseQty,unit:v.mode==='pack'?v.p.packUnit:v.p.unit,price:v.price,buy:v.buy});}});
+ if(unpriced.length)return toast('⚠ صنف بدون سعر بيع: '+unpriced[0]+' — عدّل السعر من المخزون أولاً');
  if(!items.length)return toast('أضف صنفاً واحداً على الأقل');if(!ok)return toast('الكمية المطلوبة تتجاوز المخزون المتاح');
  let gross=items.reduce((a,x)=>a+x.qty*x.price,0),discount=Number(disc.value)||0,total=Math.max(0,gross-discount),cost=items.reduce((a,x)=>a+x.baseQty*x.buy,0),profit=total-cost;
  let c=db.customers.find(x=>x.id===scus.value),type=stype.value;items.forEach(i=>{let p=db.products.find(p=>p.id===i.productId);p.qty-=i.baseQty;});
  if(c&&type==='دين'){c.balance+=total;c.last=today()}
- let x={id:uid('s'),code:'INV-'+String(db.sales.length+1).padStart(5,'0'),date:today(),created:new Date().toISOString(),customerId:c?.id||'',customerName:c?.name||'نقدي',type,total,discount,profit,cost,items,note:snote.value};
+ let x={id:uid('s'),code:'INV-'+String(db.sales.length+1).padStart(5,'0'),date:today(),created:new Date().toISOString(),customerId:c?.id||'',customerName:c?.name||'نقدي',type,total,discount,profit,cost,items,paymentMethod:type,note:snote.value};
  db.sales.push(x);log('بيع',x.code+' — '+money(total));save();closeModal();renderAll();toast('تم حفظ الفاتورة بنجاح');setTimeout(()=>viewInvoice(x.id),150);
 }
 
 function openPurchase(){
  openModal('فاتورة شراء بضاعة',`<div class="form">
  <div class="field"><label>المورد</label><select id="psup" class="input"><option value="">مورد غير محدد</option>${db.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
- <div class="field"><label>طريقة الدفع</label><select id="ptype" class="input"><option>نقدي</option><option>دين</option></select></div>
+ <div class="field"><label>طريقة الدفع <span class="pill" style="margin-right:6px">💳 إلكتروني أساسي</span></label><select id="ptype" class="input"><option selected>PalPay</option><option>Jawwal Pay</option><option>بنك فلسطين</option><option>نقدي</option><option>دين</option></select><div class="sub" style="margin-top:5px">الدفع الإلكتروني هو الافتراضي. اختر «دين» إذا كانت قيمة الشراء مستحقة للمورد.</div></div>
  </div><div id="plines" style="margin-top:14px"></div><button class="btn soft" onclick="addPurchaseLine()">+ إضافة صنف للشراء</button>
  <div class="card" style="margin-top:14px">إجمالي الشراء: <b id="ptotal" class="good">${money(0)}</b></div>
  <div class="modal-actions"><button class="btn primary" onclick="savePurchase()">حفظ وتحديث المخزون</button></div>`);
@@ -1036,7 +1057,7 @@ function purchaseLineValues(row){let p=normalizeProduct(db.products.find(a=>a.id
 function calcPurchase(){let t=0;document.querySelectorAll('#plines .form').forEach(x=>{let v=purchaseLineValues(x);t+=v.q*v.pr;});ptotal.textContent=money(t);}
 function savePurchase(){
  let items=[],total=0;document.querySelectorAll('#plines .form').forEach(x=>{let v=purchaseLineValues(x);if(v.p&&v.q){v.p.qty+=v.baseQty;if(v.mode==='base')v.p.buy=v.pr;else v.p.packBuy=v.pr;v.p.sell=v.p.packSize>1?(v.p.packSell/v.p.packSize):v.p.sell;items.push({productId:v.p.id,name:v.p.name+' ('+(v.mode==='pack'?v.p.packUnit:v.p.unit)+')',qty:v.q,baseQty:v.baseQty,unit:v.mode==='pack'?v.p.packUnit:v.p.unit,price:v.pr});total+=v.q*v.pr;}});
- if(!items.length||total<=0)return toast('أدخل الأصناف والكميات والأسعار بشكل صحيح');let s=db.suppliers.find(x=>x.id===psup.value),x={id:uid('pu'),code:'PUR-'+String(db.purchases.length+1).padStart(5,'0'),date:today(),supplier:s?.name||'مورد',supplierId:s?.id||'',type:ptype.value,total,items};if(s&&x.type==='دين')s.balance+=total;db.purchases.push(x);log('شراء',x.code+' — '+money(total));save();closeModal();renderAll();toast('تم تسجيل الشراء وتحديث المخزون بنجاح');
+ if(!items.length||total<=0)return toast('أدخل الأصناف والكميات والأسعار بشكل صحيح');let s=db.suppliers.find(x=>x.id===psup.value),x={id:uid('pu'),code:'PUR-'+String(db.purchases.length+1).padStart(5,'0'),date:today(),supplier:s?.name||'مورد',supplierId:s?.id||'',type:ptype.value,paymentMethod:ptype.value,total,items};if(s&&x.type==='دين')s.balance+=total;db.purchases.push(x);log('شراء',x.code+' — '+money(total));save();closeModal();renderAll();toast('تم تسجيل الشراء وتحديث المخزون بنجاح');
 }
 
 const GAZA_CATALOG=[
@@ -1500,18 +1521,31 @@ function openQuickCount(){
   document.getElementById('countStatus').textContent='تعذر تحميل مكتبة المسح. تأكد من اتصالك بالإنترنت أول مرة.';
   return;
  }
+ if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+  document.getElementById('countStatus').textContent='متصفحك لا يدعم الوصول للكاميرا.';
+  return;
+ }
+ if(location.protocol!=='https:' && !['localhost','127.0.0.1'].includes(location.hostname)){
+  document.getElementById('countStatus').textContent='الكاميرا تتطلب فتح الصفحة عبر HTTPS.';
+  return;
+ }
  countReader=new ZXing.BrowserMultiFormatReader();
- countReader.listVideoInputDevices().then(devices=>{
-  if(!devices||!devices.length){document.getElementById('countStatus').textContent='لا توجد كاميرا متاحة على هذا الجهاز.';return;}
-  let backCam=devices.find(d=>/back|rear|environment/i.test(d.label))||devices[devices.length-1];
-  countReader.decodeFromVideoDevice(backCam.deviceId,'countVideo',(result)=>{
-   if(!result)return;
-   let code=result.getText(),now=Date.now();
-   if(code===countLastScan.code&&now-countLastScan.time<1500)return; // منع تكرار نفس المسحة
-   countLastScan={code,time:now};
-   registerCountScan(code);
-  }).catch(()=>{document.getElementById('countStatus').textContent='تعذر تشغيل الكاميرا. تأكد من إعطاء إذن الوصول للكاميرا.';});
- }).catch(()=>{document.getElementById('countStatus').textContent='تعذر الوصول للكاميرا.';});
+ function onCountScan(result){
+  if(!result)return;
+  let code=result.getText(),now=Date.now();
+  if(code===countLastScan.code&&now-countLastScan.time<1500)return; // منع تكرار نفس المسحة
+  countLastScan={code,time:now};
+  registerCountScan(code);
+ }
+ // Same fix as the main scanner: ask directly for the rear camera so the
+ // permission prompt fires, instead of enumerating unlabeled devices first.
+ countReader.decodeFromConstraints({video:{facingMode:{ideal:'environment'}},audio:false},'countVideo',onCountScan).catch(()=>{
+  countReader.listVideoInputDevices().then(devices=>{
+   if(!devices||!devices.length){document.getElementById('countStatus').textContent='لا توجد كاميرا متاحة، أو تم رفض الإذن.';return;}
+   let backCam=devices.find(d=>/back|rear|environment/i.test(d.label))||devices[0];
+   countReader.decodeFromVideoDevice(backCam.deviceId,'countVideo',onCountScan).catch(()=>{document.getElementById('countStatus').textContent='تعذر تشغيل الكاميرا. تأكد من إعطاء إذن الوصول للكاميرا.';});
+  }).catch(()=>{document.getElementById('countStatus').textContent='تعذر الوصول للكاميرا.';});
+ });
 }
 function registerCountScan(code){
  let p=db.products.find(x=>x.barcode&&x.barcode===code);
@@ -1592,8 +1626,8 @@ function showBlocked(msg, expires_at){
 }
 
 async function enterApp(user, expires_at, offline){
- if(window.__hesabiMode!=='demo' && typeof loadAccountWorkspace==='function') loadAccountWorkspace();
  window.__hesabiCurrentUser=user;
+ if(window.__hesabiMode!=='demo' && typeof loadAccountWorkspace==='function') loadAccountWorkspace();
  if(window.__hesabiMode!=='demo' && typeof window.__hydrateCloudWorkspace==='function') await window.__hydrateCloudWorkspace(user);
  showScreen('app');
  document.getElementById('offlineBanner').style.display = offline ? 'block' : 'none';
@@ -1755,36 +1789,48 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
 
       __qrReader = new ZXing.BrowserMultiFormatReader(hints, 300);
 
-      __qrReader.listVideoInputDevices().then(function(devices){
-        if(!devices || !devices.length){
-          setScanStatus('لم يتم العثور على كاميرا. اسمح للمتصفح بالكاميرا أو استخدم الإدخال اليدوي.');
-          return;
-        }
+      function onScan(result){
+        if(!result || __qrLocked) return;
+        const text=(result.getText()||'').trim();
+        if(!text) return;
+        __qrLocked=true;
+        setScanStatus('✓ تم المسح: '+text);
+        const cb=__qrCallback;
+        setTimeout(function(){
+          window.closeScanner();
+          if(cb) cb(text);
+        }, 120);
+      }
 
-        // Prefer rear/environment camera on phones.
-        const back = devices.find(d=>/back|rear|environment|خلفية/i.test(d.label));
-        const selected = back || devices[devices.length-1];
+      // Ask the browser directly for the rear camera. This triggers the
+      // permission prompt itself instead of relying on device labels that
+      // are empty/unavailable before permission has ever been granted —
+      // that mismatch was why the scanner used to report "no camera found".
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        setScanStatus('متصفحك لا يدعم الوصول للكاميرا. استخدم الإدخال اليدوي أو متصفح Chrome/Safari حديث.');
+        return;
+      }
+      if(location.protocol!=='https:' && !['localhost','127.0.0.1'].includes(location.hostname)){
+        setScanStatus('الكاميرا تتطلب فتح الصفحة عبر HTTPS. افتح التطبيق من رابط https:// وليس بفتح الملف مباشرة.');
+        return;
+      }
 
-        return __qrReader.decodeFromVideoDevice(
-          selected.deviceId,
-          'scannerVideo',
-          function(result, err){
-            if(!result || __qrLocked) return;
-            const text=(result.getText()||'').trim();
-            if(!text) return;
-
-            __qrLocked=true;
-            setScanStatus('✓ تم المسح: '+text);
-            const cb=__qrCallback;
-            setTimeout(function(){
-              window.closeScanner();
-              if(cb) cb(text);
-            }, 120);
+      const constraints={video:{facingMode:{ideal:'environment'}}, audio:false};
+      __qrReader.decodeFromConstraints(constraints,'scannerVideo',onScan).catch(function(err){
+        console.warn('rear camera failed, falling back to default camera',err);
+        // Fall back to whatever default camera the device has (e.g. laptops/desktops).
+        __qrReader.listVideoInputDevices().then(function(devices){
+          if(!devices || !devices.length){
+            setScanStatus('لم يتم العثور على كاميرا، أو تم رفض الإذن. اسمح للمتصفح بالوصول للكاميرا من إعدادات الموقع ثم أعد المحاولة.');
+            return;
           }
-        );
-      }).catch(function(err){
-        console.error('QR camera error',err);
-        setScanStatus('تعذر تشغيل الكاميرا. تأكد من HTTPS وإذن الكاميرا، ثم جرّب الإدخال اليدوي.');
+          const back=devices.find(d=>/back|rear|environment|خلفية/i.test(d.label));
+          const selected=back||devices[0];
+          return __qrReader.decodeFromVideoDevice(selected.deviceId,'scannerVideo',onScan);
+        }).catch(function(err2){
+          console.error('camera fallback error',err2);
+          setScanStatus('تعذر تشغيل الكاميرا. تأكد من إذن الكاميرا للموقع، ثم جرّب الإدخال اليدوي.');
+        });
       });
     }catch(err){
       console.error('QR init error',err);
@@ -1957,13 +2003,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
       const p=GAZA_CATALOG_2026.find(x=>x[0]===name);
       if(!p)return;
       if(db.products.some(x=>x.name===p[0]))return;
-      db.products.push({
+      db.products.push(normalizeProduct({
         id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
-        name:p[0], main:p[1], sub:p[2], unit:p[3],
-        cost:Number(p[4])||0, price:Number(p[5])||0,
-        qty:0, reorder:Number(p[6])||0, carton:Number(p[6])||0,
-        barcode:'', createdAt:new Date().toISOString()
-      });
+        name:p[0], cat:p[1], subcat:p[2], unit:p[3],
+        buy:Number(p[4])||0, sell:Number(p[5])||0,
+        qty:0, low:Number(p[6])||db.settings.low,
+        packUnit:p[7]||'كرتونة', packSize:Number(p[6])||1,
+        barcode:''
+      }));
       added++;
     });
     save(); renderAll();
@@ -2040,11 +2087,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
     if(ps) ps.innerHTML=window.__hesabiMode==='demo'?`<span class="demoBadge">🎁 Demo</span><br><b>تجربة حسابي Pro</b><br>متبقي <b>${remaining()} أيام</b> — البيانات محلية للتجربة.`:`<span class="pill">حساب مرتبط</span><br>يتم التحقق من الاشتراك عبر الخادم عند تسجيل الدخول.`;
   }
 
-  // Load the account workspace without destroying existing v3 data.
+  // Load the account workspace, isolated per logged-in user so a shared/kiosk
+  // device never mixes one shop's data with another's.
   window.loadAccountWorkspace=function(){
-    const existing=localStorage.getItem(V2_DB_KEY);
+    const perUserKey=(typeof workspaceKey==='function')?workspaceKey():V2_DB_KEY;
+    const existing=localStorage.getItem(perUserKey);
+    const legacyShared=localStorage.getItem(V2_DB_KEY); // one-time migration from the old shared key
     const legacy=localStorage.getItem(OLD_DB_KEY);
-    db=existing?readJSON(V2_DB_KEY,db):(legacy?readJSON(OLD_DB_KEY,db):db);
+    db=existing?readJSON(perUserKey,db):(legacyShared?readJSON(V2_DB_KEY,db):(legacy?readJSON(OLD_DB_KEY,db):db));
+    if(!existing && (legacyShared||legacy)) localStorage.setItem(perUserKey,JSON.stringify(db)); // migrate forward once
     window.__hesabiMode='account';
     delete document.body.dataset.demo;
     const b=document.getElementById('demoBanner');if(b)b.style.display='none';
@@ -2078,11 +2129,62 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
     }catch(e){ /* local-first fallback */ }
   };
 
+  /* ===== معلومات التواصل وطرق دفع الاشتراك =====
+     ملاحظة: تم وضع رقم الهاتف المستخدم للتواصل، أما أكواد/أرقام الدفع
+     الخاصة بـ PalPay وبنك فلسطين فتُترك قابلة للتعديل حتى لا نضع بيانات غير صحيحة.
+  */
+  const PAYMENT_CONTACT={
+    phone:'0595972039',
+    whatsapp:'972595972039'
+  };
+  const PAYMENT_METHODS=[
+    {id:'palpay',icon:'💚',name:'PalPay',label:'رقم محفظة PalPay',value:'0595972039',note:'الخيار الأساسي للدفع الإلكتروني — رقم محفظة PalPay.' ,primary:true},
+    {id:'jawwal',icon:'📱',name:'Jawwal Pay',label:'رقم/كود Jawwal Pay',value:'0595972039',note:'رقم التواصل المضاف حاليًا — استبدله إذا كان كود المحفظة مختلفًا.'},
+    {id:'bankpal',icon:'🏦',name:'بنك فلسطين',label:'رقم الحساب / IBAN / كود الدفع',value:'أضف بيانات بنك فلسطين هنا',note:'لا يتم افتراض رقم حساب أو IBAN غير مُرسل.'}
+  ];
+
+  window.openPaymentInfo=function(){
+    const methods=PAYMENT_METHODS.map(m=>`
+      <div class="payment-method-card${m.primary?' primary-payment':''}">
+        <div class="payment-method-head"><span class="payment-method-icon">${m.icon}</span><div><b>${m.name}</b><small>${m.label}</small></div></div>
+        <div class="payment-code-row"><span id="pay-value-${m.id}">${esc(m.value)}</span><button class="btn soft" onclick="copyPaymentValue('${m.id}')">📋 نسخ</button></div>
+        <div class="payment-note">${esc(m.note)}</div>
+      </div>`).join('');
+    openModal('💳 بيانات الدفع وتفعيل الاشتراك',`
+      <div class="payment-contact">
+        <div><span>📞 الهاتف</span><a href="tel:${PAYMENT_CONTACT.phone}">${PAYMENT_CONTACT.phone}</a></div>
+        <div><span>💬 WhatsApp</span><a href="https://wa.me/${PAYMENT_CONTACT.whatsapp}" target="_blank" rel="noopener">${PAYMENT_CONTACT.phone}</a></div>
+      </div>
+      <div class="acctBox" style="margin-top:12px;border-color:var(--accent)"><b>💳 الدفع الإلكتروني هو الخيار الأساسي</b><br>ابدأ بمحفظة <b>PalPay</b>. ويمكنك أيضًا الدفع عبر Jawwal Pay أو بنك فلسطين. بعد الدفع أرسل صورة/إيصال العملية عبر WhatsApp مع البريد الإلكتروني للحساب ليتم التفعيل.</div>
+      <div class="payment-methods">${methods}</div>
+      <div class="modal-actions">
+        <a class="btn primary" href="https://wa.me/${PAYMENT_CONTACT.whatsapp}?text=${encodeURIComponent('مرحبًا، أريد تفعيل حسابي Pro. سأرسل إيصال الدفع هنا.') }" target="_blank" rel="noopener" style="text-decoration:none;text-align:center">💬 إرسال إيصال عبر WhatsApp</a>
+        <button class="btn" onclick="closeModal()">إغلاق</button>
+      </div>`);
+  };
+
+  window.copyPaymentValue=function(id){
+    const item=PAYMENT_METHODS.find(x=>x.id===id); if(!item)return;
+    const value=item.value;
+    const done=()=>toast('✅ تم نسخ بيانات الدفع');
+    if(navigator.clipboard?.writeText){navigator.clipboard.writeText(value).then(done).catch(()=>fallbackCopy(value,done));}
+    else fallbackCopy(value,done);
+  };
+  function fallbackCopy(value,done){
+    const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');done();}catch(e){toast('انسخ البيانات يدويًا: '+value)}ta.remove();
+  }
+
   window.showPlans=function(){openModal('💳 خطط حسابي Pro',`<div class="grid" style="gap:12px">
     <div class="card"><span class="pill">مجاني</span><h3>Starter</h3><p class="sub">مبيعات + منتجات + عملاء + تقارير أساسية + PWA + Offline.</p></div>
     <div class="card" style="border-color:var(--accent)"><span class="demoBadge">PRO</span><h3>Pro — $5 إلى $7 شهريًا</h3><p class="sub">Cloud Sync + Backup + باركود/QR + تقارير متقدمة + WhatsApp + كتالوج إلكتروني.</p></div>
     <div class="card"><span class="pill">BUSINESS</span><h3>Business — $12 إلى $15 شهريًا</h3><p class="sub">موظفون + صلاحيات + أجهزة متعددة + فروع + سجل عمليات متقدم.</p></div>
-  </div><div class="modal-actions"><button class="btn primary" onclick="closeModal();toast('تواصل مع الدعم لتفعيل الخطة')">طلب التفعيل</button></div>`)};
+  </div>
+  <div class="contact-purchase-card">
+    <div><b>📞 للشراء والتفعيل</b><p>الدفع أصبح إلكترونيًا: المحفظة أو البنك هو الخيار الأساسي، ثم أرسل إيصال الدفع عبر WhatsApp لإتمام التفعيل.</p></div>
+    <div class="contact-actions"><a class="btn" href="tel:${PAYMENT_CONTACT.phone}">📞 ${PAYMENT_CONTACT.phone}</a><a class="btn primary" href="https://wa.me/${PAYMENT_CONTACT.whatsapp}?text=${encodeURIComponent('مرحبًا، أريد شراء/تفعيل حسابي Pro.') }" target="_blank" rel="noopener">💬 WhatsApp</a></div>
+  </div>
+  <div class="modal-actions"><button class="btn primary" onclick="openPaymentInfo()">💚 الدفع الإلكتروني — PalPay / المحافظ / البنك</button><button class="btn" onclick="closeModal()">إغلاق</button></div>`)};
 
   window.openMarketPrices=function(){
     const products=(window.GAZA_CATALOG_2026||[]).slice(0,250);
@@ -2114,5 +2216,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
 </script>
 <script id="hesabi-pwa-register">if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
 <footer style="text-align:center;padding:18px;color:var(--mut);font-size:11px">حسابي Pro • Commercial Edition • Single Business License</footer>
+<!-- HESABI_PURCHASE_SYSTEM_START -->
+<style id="hesabi-purchase-system-style">
+#purchaseOverlay{display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px}
+#purchaseOverlay.open{display:flex}.purchase-card{width:min(680px,100%);max-height:92vh;overflow:auto;background:var(--card,#10151d);color:var(--text,#fff);border:1px solid var(--line,#273241);border-radius:22px;box-shadow:0 25px 80px rgba(0,0,0,.45);padding:22px;direction:rtl}.purchase-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.purchase-head h2{margin:0;font-size:1.35rem}.purchase-close{border:0;background:transparent;color:inherit;font-size:25px;cursor:pointer}.purchase-contact{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.purchase-contact a{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:13px;text-decoration:none;font-weight:800;border:1px solid var(--line,#273241);color:inherit}.purchase-contact .wa{background:#168a4a;color:#fff;border-color:#168a4a}.purchase-contact .call{background:rgba(255,255,255,.04)}.purchase-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}.purchase-plan{border:1px solid var(--line,#273241);border-radius:15px;padding:14px;cursor:pointer;background:rgba(255,255,255,.025)}.purchase-plan.selected{border-color:#24d66b;box-shadow:0 0 0 2px rgba(36,214,107,.14)}.purchase-plan b{display:block;margin-bottom:5px}.purchase-payments{display:grid;gap:9px;margin:14px 0}.purchase-payment{border:1px solid var(--line,#273241);border-radius:14px;padding:13px}.purchase-payment.main{border-color:#24d66b;background:rgba(36,214,107,.07)}.purchase-payment-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.purchase-copy{border:1px solid var(--line,#273241);background:rgba(255,255,255,.05);color:inherit;border-radius:9px;padding:7px 10px;cursor:pointer}.purchase-note{font-size:.88rem;opacity:.78;line-height:1.6}.purchase-action{width:100%;border:0;border-radius:14px;padding:14px;font-size:1rem;font-weight:900;cursor:pointer;background:#24d66b;color:#06120a;margin-top:10px}.purchase-action.secondary{background:rgba(255,255,255,.07);color:inherit;border:1px solid var(--line,#273241)}
+@media(max-width:600px){.purchase-plans{grid-template-columns:1fr}.purchase-contact{grid-template-columns:1fr}}
+</style>
+<div id="purchaseOverlay" aria-hidden="true"><div class="purchase-card"><div class="purchase-head"><h2>🛒 شراء وتفعيل حسابي Pro</h2><button class="purchase-close" onclick="closePurchaseModal()" aria-label="إغلاق">×</button></div><p class="purchase-note">اختر الباقة، ادفع إلكترونيًا، ثم أرسل إيصال الدفع عبر WhatsApp ليتم تفعيل حسابك.</p><div class="purchase-contact"><a class="wa" href="https://wa.me/972595972039?text=مرحبًا،%20أريد%20شراء%20وتفعيل%20حسابي%20Pro" target="_blank" rel="noopener">💬 طلب عبر WhatsApp</a><a class="call" href="tel:0595972039">📞 اتصال 0595972039</a></div><h3>1) اختر الباقة</h3><div class="purchase-plans"><div class="purchase-plan selected" data-plan="Starter" onclick="selectPurchasePlan(this)"><b>Starter</b><span>للمتاجر الصغيرة</span></div><div class="purchase-plan" data-plan="Pro" onclick="selectPurchasePlan(this)"><b>Pro ⭐</b><span>للاستخدام الكامل</span></div><div class="purchase-plan" data-plan="Business" onclick="selectPurchasePlan(this)"><b>Business</b><span>للنشاط الأكبر</span></div></div><h3>2) ادفع إلكترونيًا</h3><div class="purchase-payments"><div class="purchase-payment main"><div class="purchase-payment-row"><div><b>💚 PalPay — أساسي</b><br><span>0595972039</span></div><button class="purchase-copy" onclick="copyPurchaseValue('0595972039')">📋 نسخ</button></div></div><div class="purchase-payment"><div class="purchase-payment-row"><div><b>📱 Jawwal Pay</b><br><span>0595972039</span></div><button class="purchase-copy" onclick="copyPurchaseValue('0595972039')">📋 نسخ</button></div></div><div class="purchase-payment"><div class="purchase-payment-row"><div><b>🏦 بنك فلسطين</b><br><span class="purchase-note">تواصل معنا عبر WhatsApp للحصول على بيانات التحويل البنكي.</span></div></div></div></div><button class="purchase-action" onclick="sendPurchaseWhatsApp()">📤 دفعت — أرسل إيصال الدفع عبر WhatsApp</button><button class="purchase-action secondary" onclick="closePurchaseModal()">إغلاق</button><p class="purchase-note" style="margin-top:13px">عند الإرسال، سيُطلب منك إرسال البريد الإلكتروني للحساب، الباقة، وطريقة الدفع وإيصال العملية.</p></div></div>
+<script id="hesabi-purchase-system-script">(function(){window.__purchasePlan='Starter';window.openPurchaseModal=function(plan){if(plan){window.__purchasePlan=plan;document.querySelectorAll('.purchase-plan').forEach(function(el){el.classList.toggle('selected',el.dataset.plan===plan);});}var o=document.getElementById('purchaseOverlay');if(o){o.classList.add('open');o.setAttribute('aria-hidden','false');}};window.closePurchaseModal=function(){var o=document.getElementById('purchaseOverlay');if(o){o.classList.remove('open');o.setAttribute('aria-hidden','true');}};window.selectPurchasePlan=function(el){window.__purchasePlan=el.dataset.plan||'Starter';document.querySelectorAll('.purchase-plan').forEach(function(x){x.classList.remove('selected');});el.classList.add('selected');};window.copyPurchaseValue=async function(value){try{await navigator.clipboard.writeText(value);}catch(e){var ta=document.createElement('textarea');ta.value=value;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();}if(typeof window.showToast==='function')window.showToast('تم نسخ رقم الدفع');else alert('تم نسخ رقم الدفع: '+value);};window.sendPurchaseWhatsApp=function(){var plan=window.__purchasePlan||'Starter',email='';['loginEmail','accountEmail','userEmail','email'].some(function(id){var el=document.getElementById(id);if(el&&el.value){email=el.value.trim();return true;}return false;});var msg='مرحبًا، أريد شراء وتفعيل حسابي Pro.%0Aالباقة: '+encodeURIComponent(plan)+'%0A'+(email?'البريد الإلكتروني: '+encodeURIComponent(email)+'%0A':'')+'طريقة الدفع: دفع إلكتروني%0Aسأرسل إيصال الدفع هنا لتأكيد التفعيل.';window.open('https://wa.me/972595972039?text='+msg,'_blank','noopener');};document.addEventListener('click',function(e){var o=document.getElementById('purchaseOverlay');if(o&&e.target===o)closePurchaseModal();});})();</script>
+<!-- HESABI_PURCHASE_SYSTEM_END -->
+
 </body>
 </html>
