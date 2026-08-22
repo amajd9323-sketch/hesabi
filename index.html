@@ -262,6 +262,70 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 @media (min-width:701px){
   .mobile-only{display:none!important}
 }
+/* ============================================================
+   MOBILE COMMAND CENTER 5.0
+   كل وحدات نسخة الكمبيوتر متاحة من زر "كل الميزات"
+   ============================================================ */
+.mobile-menu-backdrop{
+  display:none;position:fixed;inset:0;z-index:10050;
+  background:rgba(3,7,6,.72);backdrop-filter:blur(12px);
+  align-items:flex-end;justify-content:center;padding:12px;
+}
+.mobile-menu-backdrop.show{display:flex}
+.mobile-menu-panel{
+  width:min(720px,100%);max-height:88dvh;overflow:auto;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:26px 26px 18px 18px;box-shadow:0 25px 70px rgba(0,0,0,.55);
+  padding:16px;animation:mobileSheetIn .22s ease;
+}
+@keyframes mobileSheetIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.mobile-menu-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:4px 2px 14px;border-bottom:1px solid var(--line);margin-bottom:12px;
+}
+.mobile-menu-head h3{margin:0;font-size:18px}
+.mobile-menu-head p{margin:4px 0 0;color:var(--mut);font-size:11px}
+.mobile-menu-close{
+  width:44px;height:44px;border-radius:14px;border:1px solid var(--line);
+  background:var(--card-glow);color:var(--txt);font-size:18px;
+}
+.mobile-menu-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
+}
+.mobile-menu-item{
+  min-height:82px!important;border:1px solid var(--line);background:var(--card-glow);
+  color:var(--txt);border-radius:18px;padding:10px 6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;text-align:center;font-size:11px;font-weight:700;
+}
+.mobile-menu-item .ico{font-size:22px;width:auto}
+.mobile-menu-item.active{
+  border-color:var(--accent);background:rgba(16,185,129,.13);color:var(--accent);
+}
+.mobile-menu-section{
+  margin:14px 0 8px;color:var(--mut);font-size:11px;font-weight:800;
+}
+.mobile-menu-actions{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:9px;
+}
+.mobile-menu-action{
+  min-height:52px!important;border:1px solid var(--line);border-radius:16px;
+  background:var(--card);color:var(--txt);font-weight:700;
+}
+.mobile-menu-action.primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-color:transparent}
+.mobile-menu-action.danger{background:rgba(248,113,113,.12);color:var(--bad);border-color:rgba(248,113,113,.25)}
+.mobile-menu-hint{
+  margin-top:12px;padding:10px 12px;border-radius:14px;
+  background:var(--card-glow);color:var(--mut);font-size:11px;line-height:1.7;text-align:center;
+}
+@media(max-width:700px){
+  .mobile-menu-grid{grid-template-columns:repeat(3,1fr)}
+  .mobile-menu-item{min-height:78px!important}
+}
+@media(max-width:430px){
+  .mobile-menu-grid{grid-template-columns:repeat(2,1fr)}
+}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
@@ -289,6 +353,40 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 })();
 </script>
 
+<style id="mobile-command-center-overrides">
+@media(max-width:700px){
+  /* إلغاء الشريط الجانبي القديم على الهاتف حتى لا يظهر شريطان فوق بعض */
+  .side{display:none!important}
+  .mobile-command-nav{
+    grid-template-columns:repeat(5,1fr)!important;
+    height:calc(var(--mobile-nav-h) + var(--mobile-safe-bottom))!important;
+    padding:5px 7px var(--mobile-safe-bottom)!important;
+    gap:4px!important;
+  }
+  .mobile-command-nav button{
+    min-height:62px!important;height:62px!important;border-radius:15px!important;
+    position:relative;
+  }
+  .mobile-command-nav button .ico{font-size:20px!important}
+  .mobile-command-nav .mobile-pos-btn{
+    background:linear-gradient(135deg,var(--p),var(--p2))!important;
+    color:#fff!important;border:1px solid transparent!important;
+    transform:translateY(-7px);height:68px!important;min-height:68px!important;
+    box-shadow:0 8px 25px rgba(16,185,129,.28);
+  }
+  .mobile-command-nav .mobile-pos-btn .ico{font-size:23px!important}
+  .mobile-command-nav .mobile-all-btn{
+    background:var(--card-glow)!important;border:1px solid var(--line)!important;
+  }
+  .mobile-command-nav .mobile-all-btn.active{
+    color:var(--accent)!important;
+    border-color:var(--accent)!important;
+  }
+  .mobile-menu-backdrop{padding-bottom:calc(8px + var(--mobile-safe-bottom))}
+  .mobile-menu-panel{max-height:calc(92dvh - var(--mobile-safe-bottom))}
+  .mobile-menu-action{font-size:12px}
+}
+</style>
 </head>
 <body>
 
@@ -479,13 +577,65 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 </section>
 </main></div>
 
-<nav class="bottom">
-<button class="active" data-page="dashboard"><span class="ico">⚡</span><small>الرئيسية</small></button>
+<nav class="bottom mobile-command-nav" aria-label="التنقل السريع">
+<button class="active" data-page="dashboard"><span class="ico">⌂</span><small>الرئيسية</small></button>
 <button data-page="sales"><span class="ico">🧾</span><small>المبيعات</small></button>
+<button class="mobile-pos-btn" onclick="openPOS()"><span class="ico">⚡</span><small>بيع سريع</small></button>
 <button data-page="inventory"><span class="ico">📦</span><small>المخزون</small></button>
-<button data-page="customers"><span class="ico">👥</span><small>العملاء</small></button>
-<button data-page="settings"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+<button type="button" class="mobile-all-btn" onclick="toggleMobileMenu(true)" aria-label="كل الميزات"><span class="ico">☰</span><small>كل الميزات</small></button>
 </nav>
+
+
+<!-- ===== مركز الميزات الكامل للهاتف ===== -->
+<div id="mobileMenu" class="mobile-menu-backdrop" onclick="if(event.target===this)toggleMobileMenu(false)">
+  <div class="mobile-menu-panel" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle">
+    <div class="mobile-menu-head">
+      <div>
+        <h3 id="mobileMenuTitle">☰ كل ميزات حسابي Pro</h3>
+        <p>جميع أقسام نسخة الكمبيوتر متاحة هنا بدون ازدحام الشاشة</p>
+      </div>
+      <button class="mobile-menu-close" type="button" onclick="toggleMobileMenu(false)" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="mobile-menu-grid">
+      <button class="mobile-menu-item" data-mobile-page="dashboard" onclick="mobileGo('dashboard')"><span class="ico">⚡</span><span>الرئيسية</span></button>
+      <button class="mobile-menu-item" data-mobile-page="sales" onclick="mobileGo('sales')"><span class="ico">🧾</span><span>المبيعات</span></button>
+      <button class="mobile-menu-item" data-mobile-page="purchases" onclick="mobileGo('purchases')"><span class="ico">🛒</span><span>المشتريات</span></button>
+      <button class="mobile-menu-item" data-mobile-page="inventory" onclick="mobileGo('inventory')"><span class="ico">📦</span><span>المخزون والأصناف</span></button>
+      <button class="mobile-menu-item" data-mobile-page="customers" onclick="mobileGo('customers')"><span class="ico">👥</span><span>العملاء</span></button>
+      <button class="mobile-menu-item" data-mobile-page="suppliers" onclick="mobileGo('suppliers')"><span class="ico">🏭</span><span>الموردون</span></button>
+      <button class="mobile-menu-item" data-mobile-page="expenses" onclick="mobileGo('expenses')"><span class="ico">💸</span><span>المصروفات</span></button>
+      <button class="mobile-menu-item" data-mobile-page="reports" onclick="mobileGo('reports')"><span class="ico">📊</span><span>التقارير</span></button>
+      <button class="mobile-menu-item" data-mobile-page="audit" onclick="mobileGo('audit')"><span class="ico">📝</span><span>سجل العمليات</span></button>
+      <button class="mobile-menu-item" data-mobile-page="settings" onclick="mobileGo('settings')"><span class="ico">⚙️</span><span>الإعدادات</span></button>
+      <button class="mobile-menu-item" data-mobile-page="more" onclick="mobileGo('more')"><span class="ico">✨</span><span>أدوات إضافية</span></button>
+    </div>
+
+    <div class="mobile-menu-section">إجراءات سريعة</div>
+    <div class="mobile-menu-actions">
+      <button class="mobile-menu-action primary" onclick="mobileAction(openSale)">+ بيع جديد</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openPurchase)">🛒 شراء بضاعة</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openProduct)">📦 إضافة صنف</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openCustomer)">👤 إضافة عميل</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openPayment)">💳 تسجيل دفعة</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openExpense)">💸 تسجيل مصروف</button>
+      <button class="mobile-menu-action" onclick="mobileAction(scanBarcode)">📷 مسح باركود</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openQuickCount)">📦 جرد سريع</button>
+      <button class="mobile-menu-action" onclick="mobileAction(openMarketPrices)">🇵🇸 أسعار السوق</button>
+      <button class="mobile-menu-action" onclick="mobileAction(showInstallGuide)">📲 تثبيت التطبيق</button>
+    </div>
+
+    <div class="mobile-menu-section">الحساب والنظام</div>
+    <div class="mobile-menu-actions">
+      <button class="mobile-menu-action" onclick="mobileAction(backup)">⬇ نسخة احتياطية</button>
+      <button class="mobile-menu-action" onclick="mobileAction(showPlans)">💳 الخطط والاشتراك</button>
+      <button class="mobile-menu-action" onclick="mobileAction(setTheme, db.settings.theme==='dark'?'light':'dark')">🌓 تبديل المظهر</button>
+      <button class="mobile-menu-action danger" onclick="mobileAction(doLogout)">🚪 تسجيل خروج</button>
+    </div>
+
+    <div class="mobile-menu-hint">💡 زر «كل الميزات» في الأسفل يفتح هذه اللوحة من أي صفحة. لن تحتاج إلى تمرير قائمة طويلة أو مساحة كبيرة للأزرار.</div>
+  </div>
+</div>
 
 <div id="mb" class="modalbg"><div class="modal"><div class="mh"><h3 id="mt">إضافة</h3><button class="close" onclick="closeModal()">✕</button></div><div id="mc"></div></div></div>
 <div id="scannerModal" class="modalbg">
@@ -538,10 +688,37 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 function log(action,detail){db.audit.unshift({id:uid('a'),time:new Date().toISOString(),user:db.users[0]?.name||'المالك',action,detail});db.audit=db.audit.slice(0,500)}
 function toast(x){let t=document.getElementById('toast');t.textContent=x;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function toggleMobileMenu(show){
+  const m=document.getElementById('mobileMenu');
+  if(!m)return;
+  m.classList.toggle('show',!!show);
+  if(show){
+    document.body.style.overflow='hidden';
+    updateMobileMenuActive();
+  }else{
+    document.body.style.overflow='';
+  }
+}
+function updateMobileMenuActive(){
+  const active=document.querySelector('.page.active')?.id;
+  document.querySelectorAll('[data-mobile-page]').forEach(x=>x.classList.toggle('active',x.dataset.mobilePage===active));
+}
+function mobileGo(p){
+  toggleMobileMenu(false);
+  go(p);
+}
+function mobileAction(fn,...args){
+  toggleMobileMenu(false);
+  setTimeout(()=>{try{fn(...args)}catch(e){console.error(e)}},30);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') toggleMobileMenu(false);
+});
+
 function go(p){
  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));
  document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
- renderAll();window.scrollTo(0,0);
+ renderAll();updateMobileMenuActive();window.scrollTo(0,0);
 }
 document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>go(x.dataset.page));
 function openModal(t,c){document.getElementById('mt').textContent=t;document.getElementById('mc').innerHTML=c;document.getElementById('mb').classList.add('show')}
