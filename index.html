@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070D0B">
 <link rel="manifest" href="manifest.webmanifest">
-<title>StoreFlow Pro — POS & Inventory Management</title>
+<title>حسابي Pro — POS & Inventory Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js"></script>
@@ -53,6 +53,10 @@ button{cursor:pointer;transition:all 0.2s ease}
 .authCard .sub{color:var(--mut);font-size:13px;margin:0 0 18px;line-height:1.6}
 .authCard .field{text-align:right;margin-bottom:12px}
 .authError{color:var(--bad);font-size:13px;min-height:18px;margin-top:4px}
+.demoBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--accent);font-size:11px;font-weight:800}
+.demoBanner{background:linear-gradient(135deg,#064e3b,#047857);color:#ecfdf5;padding:10px 12px;border-radius:14px;margin:0 0 12px;font-size:12px;font-weight:700;display:none}
+.mobile-install{display:none}
+@media(max-width:700px){.authCard{padding:24px 18px;max-width:430px}.authWrap{padding:12px}.authCard .logo{margin-bottom:10px}.authCard h2{font-size:22px}.demoBanner{font-size:11px}.mobile-install{display:block!important}}
 .acctBox{margin-top:12px;background:var(--card-glow);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:12px;line-height:1.8;color:var(--mut)}
 .acctBox b{color:var(--txt)}
 .offlineBanner{background:var(--warn);color:#1a1400;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:12px;margin:0 0 16px}
@@ -158,7 +162,7 @@ button{cursor:pointer;transition:all 0.2s ease}
 </style>
 <style id="mobile-first-4">
 /* ============================================================
-   StoreFlow Pro — Mobile First 4.0
+   حسابي Pro — Mobile First 4.0
    ============================================================ */
 :root{
   --mobile-nav-h: 72px;
@@ -267,10 +271,10 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0f14">
-<meta name="description" content="StoreFlow Pro — Professional POS, inventory, sales and business management system.">
-<meta name="application-name" content="StoreFlow Pro">
+<meta name="description" content="حسابي Pro — Professional POS, inventory, sales and business management system.">
+<meta name="application-name" content="حسابي Pro">
 <meta name="product-license" content="Single Business License">
-<style id="storeflow-license-ui">
+<style id="hesabi-license-ui">
 .license-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card-glow);font-size:11px;color:var(--accent);font-weight:700}
 </style>
 
@@ -299,12 +303,16 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <div id="authLogin" class="authWrap" style="display:none">
   <form id="loginForm" class="authCard">
     <div class="logo" style="width:56px;height:56px;font-size:26px;margin:0 auto 14px">ح</div>
-    <h2>StoreFlow Pro</h2>
+    <h2>حسابي Pro</h2>
     <p class="sub">سجّل الدخول بحسابك للمتابعة</p>
     <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email" class="input" required autocomplete="username"></div>
     <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password" class="input" required autocomplete="current-password"></div>
     <div id="loginError" class="authError"></div>
     <button id="loginBtn" type="submit" class="btn primary" style="width:100%;margin-top:10px">دخول</button>
+    <button id="demoBtn" type="button" class="btn" style="width:100%;margin-top:10px;border-color:var(--accent);color:var(--accent)" onclick="startDemoTrial()">🚀 جرّب حسابي Pro مجانًا لمدة 3 أيام</button>
+    <div class="acctBox" style="margin-top:14px;text-align:right">
+      <b>🎁 تجربة Demo</b><br>تجربة كاملة على الهاتف بدون بطاقة بنكية. البيانات التجريبية منفصلة عن حسابك الحقيقي.
+    </div>
   </form>
 </div>
 
@@ -321,7 +329,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 
 <div class="app" id="appRoot" style="display:none">
 <aside class="side">
-<div class="brand"><div class="logo">ح</div><div><b>StoreFlow Pro</b><small>POS & Inventory Management</small></div></div>
+<div class="brand"><div class="logo">ح</div><div><b>حسابي Pro</b><small>POS & Inventory Management</small></div></div>
 <nav class="nav">
 <button class="active" data-page="dashboard"><span class="ico">⚡</span> الرئيسية</button>
 <button data-page="sales"><span class="ico">🧾</span> المبيعات</button>
@@ -351,7 +359,8 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 
 <main class="main">
 <div id="offlineBanner" class="offlineBanner" style="display:none">⚠ وضع عدم اتصال — يعمل التطبيق من آخر تحقق ناجح من الاشتراك</div>
-<div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">StoreFlow Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
+<div id="demoBanner" class="demoBanner">🚀 وضع التجربة: حسابي Pro كامل لمدة 3 أيام — <span id="demoRemaining">جارٍ الحساب...</span> <button class="btn" style="float:left;min-height:34px;padding:6px 10px;background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25)" onclick="endDemoTrial()">إنهاء التجربة</button></div>
+<div class="mobile"><div class="brand" style="border:0;padding:0;margin:0"><div class="logo" style="width:36px;height:36px;font-size:16px">ح</div><div><b style="font-size:15px">حسابي Pro</b><small id="mobileBusiness">متجري</small></div></div><span class="pill">محلي ⚡</span></div>
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="page active">
@@ -375,6 +384,8 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <button onclick="openCustomer()"><span>👤</span><b>إضافة عميل</b></button>
 <button onclick="openPayment()"><span>💳</span><b>تسجيل دفعة</b></button>
 <button onclick="openExpense()"><span>💸</span><b>تسجيل مصروف</b></button>
+<button onclick="openMarketPrices()"><span>🇵🇸</span><b>أسعار السوق</b></button>
+<button onclick="showInstallGuide()"><span>📲</span><b>تثبيت التطبيق</b></button>
 </div></div>
 <div class="section grid two"><div class="card"><div class="top" style="margin:0"><h2>آخر العمليات</h2><button class="btn soft" onclick="go('sales')">عرض الكل</button></div><div id="recent"></div></div><div class="card"><h2>تنبيهات انفاد المخزون</h2><div id="low"></div></div></div>
 </section>
@@ -390,7 +401,7 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <div class="card table-wrap"><table class="table"><thead><tr><th>الفاتورة</th><th>المورد</th><th>التاريخ</th><th>النوع</th><th>الإجمالي</th><th>الإجراءات</th></tr></thead><tbody id="purchasesT"></tbody></table></div></section>
 
 <!-- INVENTORY -->
-<section id="inventory" class="page"><div class="top"><div><h1>المخزون والأصناف (بالحبة، العلبه، الكيلو، اللتر...)</h1><p>إدارة المنتجات وتحديد الوحدات الرئيسية والفرعية وأسعارها بدقة</p></div><div class="actions"><button class="btn" onclick="inventoryAdjust()">تسوية جرد</button><button class="btn" onclick="openGazaCatalog()">🇵🇸 كتالوج غزة</button><button class="btn primary" onclick="openProduct()">+ صنف جديد</button></div></div>
+<section id="inventory" class="page"><div class="top"><div><h1>المخزون والأصناف (بالحبة، العلبه، الكيلو، اللتر...)</h1><p>إدارة المنتجات وتحديد الوحدات الرئيسية والفرعية وأسعارها بدقة</p></div><div class="actions"><button class="btn" onclick="inventoryAdjust()">تسوية جرد</button><button class="btn" onclick="openGazaCatalog()">🇵🇸 كتالوج غزة</button><button class="btn soft" onclick="openMarketPrices()">💹 أسعار السوق</button><button class="btn primary" onclick="openProduct()">+ صنف جديد</button></div></div>
 <div class="toolbar"><input id="iq" class="input search" placeholder="بحث باسم الصنف، الباركود، أو التصنيف الرئيسي/الفرعي..." oninput="renderInventory()"><button class="btn" onclick="scanBarcode()">📷 باركود</button><button class="btn" onclick="openQuickCount()">📦 جرد سريع</button></div>
 <div class="card table-wrap"><table class="table"><thead><tr><th>الصنف</th><th>التصنيف الرئيسي / الفرعي</th><th>الوحدة</th><th>الكمية</th><th>شراء</th><th>بيع</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inventoryT"></tbody></table></div></section>
 
@@ -439,7 +450,8 @@ button,.btn,.nav button,.action,.icon-btn{min-height:48px}
 <button class="btn danger" onclick="removeLogo()">إزالة الشعار</button>
 </div><p class="hint" style="margin-top:8px">يُفضّل صورة مربعة صغيرة (أقل من 300×300) لسرعة التحميل.</p></div>
 </div>
-<div class="section card"><h2>النسخ الاحتياطي وإدارة البيانات</h2><p class="sub">تصدير أو استيراد قاعدة البيانات بالكامل بصيغة JSON لضمان الأمان الكامل.</p><div class="actions" style="margin-top:12px"><button class="btn" onclick="backup()">⬇ تصدير نسخة احتياطية</button><label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="restore(event)"></label><button class="btn danger" onclick="resetData()">حذف وتصفير البيانات</button></div></div>
+<div class="section card"><h2>💳 حالة الخطة والاشتراك</h2><div id="planStatusBox" class="acctBox" style="margin-top:8px"></div><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="showPlans()">عرض الخطط</button><button class="btn" onclick="startDemoTrial()">🎁 تشغيل تجربة 3 أيام</button></div></div>
+  <div class="section card"><h2>النسخ الاحتياطي وإدارة البيانات</h2><p class="sub">تصدير أو استيراد قاعدة البيانات بالكامل بصيغة JSON لضمان الأمان الكامل.</p><div class="actions" style="margin-top:12px"><button class="btn" onclick="backup()">⬇ تصدير نسخة احتياطية</button><label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="restore(event)"></label><button class="btn danger" onclick="resetData()">حذف وتصفير البيانات</button></div></div>
 </section>
 
 <!-- MORE -->
@@ -504,7 +516,7 @@ let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
  products:[],customers:[],suppliers:[],sales:[],purchases:[],expenses:[],payments:[],audit:[],tasks:[],
  users:[{id:'u1',name:'المالك',role:'مدير'}]
 };
-const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
+function save(){ const k=(window.__hesabiMode==='demo')?'hesabi_pro_v2_demo':'hesabi_pro_v2_workspace'; localStorage.setItem(k,JSON.stringify(db)); if(window.__hesabiMode!=='demo' && typeof window.__hesabiCloudSync==='function') window.__hesabiCloudSync(); }
 db.products=db.products.map(normalizeProduct);
 const cur=()=>db.settings.currency||'₪';
 const money=n=>cur()+' '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
@@ -1211,7 +1223,10 @@ function showBlocked(msg, expires_at){
  document.getElementById('blockedExpiry').textContent = expires_at ? ('تاريخ الانتهاء: '+fmtDate(expires_at)) : '';
 }
 
-function enterApp(user, expires_at, offline){
+async function enterApp(user, expires_at, offline){
+ if(window.__hesabiMode!=='demo' && typeof loadAccountWorkspace==='function') loadAccountWorkspace();
+ window.__hesabiCurrentUser=user;
+ if(window.__hesabiMode!=='demo' && typeof window.__hydrateCloudWorkspace==='function') await window.__hydrateCloudWorkspace(user);
  showScreen('app');
  document.getElementById('offlineBanner').style.display = offline ? 'block' : 'none';
  const days = expires_at ? Math.max(0, Math.ceil((new Date(expires_at).getTime()-Date.now())/86400000)) : null;
@@ -1234,14 +1249,14 @@ async function verifyAndEnter(user, allowOfflineFallback){
   if(error) throw error;
   if(!data){ showBlocked('لا يوجد اشتراك مرتبط بهذا الحساب. تواصل مع الدعم لتفعيله.', null); return; }
   saveSubCache(user.email, data.is_active, data.expires_at);
-  if(isValidSub(data.is_active, data.expires_at)) enterApp(user, data.expires_at, false);
+  if(isValidSub(data.is_active, data.expires_at)) await enterApp(user, data.expires_at, false);
   else showBlocked('انتهى الاشتراك أو غير مُفعّل حالياً.', data.expires_at);
  }catch(err){
   if(allowOfflineFallback){
    const cache = getSubCache();
    if(cache && cache.email===user.email && isValidSub(cache.is_active, cache.expires_at)){
     const daysSinceCheck = (Date.now()-cache.checkedAt)/86400000;
-    if(daysSinceCheck <= OFFLINE_GRACE_DAYS){ enterApp(user, cache.expires_at, true); return; }
+    if(daysSinceCheck <= OFFLINE_GRACE_DAYS){ await enterApp(user, cache.expires_at, true); return; }
    }
   }
   showBlocked('تعذر التحقق من الاشتراك. تأكد من اتصالك بالإنترنت ثم أعد المحاولة.', null);
@@ -1249,6 +1264,7 @@ async function verifyAndEnter(user, allowOfflineFallback){
 }
 
 async function doLogout(){
+ if(window.__hesabiMode==='demo'){ window.__hesabiMode='account'; delete document.body.dataset.demo; }
  if(sbClient) await sbClient.auth.signOut();
  localStorage.removeItem(SUB_CACHE_KEY);
  document.getElementById('loginEmail').value='';
@@ -1584,6 +1600,146 @@ document.getElementById('loginForm').addEventListener('submit', async (e)=>{
 })();
 </script>
 
-<footer style="text-align:center;padding:18px;color:var(--mut);font-size:11px">StoreFlow Pro • Commercial Edition • Single Business License</footer>
+<script id="hesabi-v2-mobile-saas">
+/* ============================================================
+   حسابي Pro V2 — Mobile First + 3 Day Demo + PWA helpers
+   ملاحظة: تجربة الـDemo محلية وليست بديلاً عن entitlement server-side.
+   ============================================================ */
+(function(){
+  const DEMO_KEY='hesabi_pro_v2_demo';
+  const DEMO_STARTED_KEY='hesabi_pro_v2_demo_started';
+  const DEMO_DAYS=3;
+  const OLD_DB_KEY='hesabi_pro_v3_units';
+  const V2_DB_KEY='hesabi_pro_v2_workspace';
+  window.__hesabiMode=window.__hesabiMode||'account';
+
+  function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')||fallback}catch(e){return fallback}}
+  function clone(x){return JSON.parse(JSON.stringify(x))}
+  function demoTemplate(){
+    const now=new Date(); const ds=now.toISOString().slice(0,10);
+    return {
+      settings:{business:'متجر التجربة',owner:'عميل Demo',currency:'₪',low:5,theme:localStorage.getItem('hesabi_theme')||'dark',dailyGoal:1000,logo:''},
+      products:[
+        {id:'demo-p1',name:'مياه معدنية',cat:'مشروبات',subcat:'مياه',unit:'حبة',qty:48,buy:1.2,sell:2,low:10,barcode:'629000000001',sku:'DEMO001'},
+        {id:'demo-p2',name:'عصير برتقال',cat:'مشروبات',subcat:'عصائر',unit:'حبة',qty:30,buy:2.5,sell:4,low:8,barcode:'629000000002',sku:'DEMO002'},
+        {id:'demo-p3',name:'شوكولاتة',cat:'حلويات',subcat:'شوكولاتة',unit:'حبة',qty:22,buy:3,sell:5,low:5,barcode:'629000000003',sku:'DEMO003'}
+      ],
+      customers:[{id:'demo-c1',name:'عميل تجريبي',phone:'0590000000',balance:25,last:ds}],suppliers:[],
+      sales:[{id:'demo-s1',code:'DEMO-1001',customerName:'نقدي',date:ds,type:'نقدي',total:42,profit:15.6,items:[{name:'مياه معدنية',qty:6},{name:'عصير برتقال',qty:3}],created:now.toISOString()}],
+      purchases:[],expenses:[],payments:[],audit:[],tasks:[{id:'demo-t1',text:'جرّب إضافة أول منتج لك',done:false}],
+      users:[{id:'demo-user',name:'عميل Demo',role:'مدير'}]
+    };
+  }
+  function demoState(){return readJSON(DEMO_KEY,null)}
+  function demoStarted(){return Number(localStorage.getItem(DEMO_STARTED_KEY)||0)}
+  function demoExpires(){const st=demoStarted();return st?st+DEMO_DAYS*86400000:0}
+  function demoValid(){return !!demoStarted() && Date.now()<demoExpires()}
+  function remaining(){return Math.max(0,Math.ceil((demoExpires()-Date.now())/86400000))}
+
+  window.isDemoTrialValid=demoValid;
+  window.startDemoTrial=function(){
+    let st=demoStarted();
+    if(st && !demoValid()){
+      if(!confirm('انتهت تجربة الـDemo. هل تريد إعادة فتح بيانات Demo من البداية؟')) return;
+      st=Date.now(); localStorage.setItem(DEMO_STARTED_KEY,String(st)); localStorage.setItem(DEMO_KEY,JSON.stringify(demoTemplate()));
+    } else if(!st){
+      st=Date.now(); localStorage.setItem(DEMO_STARTED_KEY,String(st)); localStorage.setItem(DEMO_KEY,JSON.stringify(demoTemplate()));
+    } else if(!demoState()) localStorage.setItem(DEMO_KEY,JSON.stringify(demoTemplate()));
+    window.__hesabiMode='demo';
+    db=readJSON(DEMO_KEY,demoTemplate());
+    document.body.dataset.demo='1';
+    showScreen('app');
+    const demoBanner=document.getElementById('demoBanner'); if(demoBanner) demoBanner.style.display='block';
+    if(typeof renderAll==='function') renderAll();
+    if(typeof toast==='function') toast('🚀 بدأت تجربة حسابي Pro لمدة 3 أيام');
+    updateDemoUI();
+  };
+  window.endDemoTrial=function(){
+    if(!confirm('إنهاء تجربة الـDemo والعودة لتسجيل الدخول؟'))return;
+    window.__hesabiMode='account'; delete document.body.dataset.demo;
+    const b=document.getElementById('demoBanner');if(b)b.style.display='none';
+    if(typeof doLogout==='function') doLogout(); else showScreen('login');
+  };
+  function updateDemoUI(){
+    const b=document.getElementById('demoBanner'); const r=document.getElementById('demoRemaining');
+    if(b&&window.__hesabiMode==='demo'){b.style.display='block';if(r)r.textContent=remaining()+' أيام متبقية';}
+    const ps=document.getElementById('planStatusBox');
+    if(ps) ps.innerHTML=window.__hesabiMode==='demo'?`<span class="demoBadge">🎁 Demo</span><br><b>تجربة حسابي Pro</b><br>متبقي <b>${remaining()} أيام</b> — البيانات محلية للتجربة.`:`<span class="pill">حساب مرتبط</span><br>يتم التحقق من الاشتراك عبر الخادم عند تسجيل الدخول.`;
+  }
+
+  // Load the account workspace without destroying existing v3 data.
+  window.loadAccountWorkspace=function(){
+    const existing=localStorage.getItem(V2_DB_KEY);
+    const legacy=localStorage.getItem(OLD_DB_KEY);
+    db=existing?readJSON(V2_DB_KEY,db):(legacy?readJSON(OLD_DB_KEY,db):db);
+    window.__hesabiMode='account';
+    delete document.body.dataset.demo;
+    const b=document.getElementById('demoBanner');if(b)b.style.display='none';
+  };
+
+
+  // Make the app feel native on mobile: haptics + viewport-safe focus.
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button,.btn');
+    if(b && navigator.vibrate) navigator.vibrate(8);
+  },{passive:true});
+  document.addEventListener('focusin',e=>{
+    if(window.innerWidth<=700 && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),120);
+  });
+
+  // Optional Supabase cloud workspace. If the table is not installed yet, V2 keeps working locally.
+  let __syncTimer=null, __syncBusy=false;
+  window.__hesabiCloudSync=function(){
+    if(__syncBusy || !window.__hesabiCurrentUser || !sbClient || window.__hesabiMode==='demo') return;
+    clearTimeout(__syncTimer); __syncTimer=setTimeout(async()=>{
+      __syncBusy=true;
+      try{await sbClient.from('workspace_data').upsert({user_id:window.__hesabiCurrentUser.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});}catch(e){}finally{__syncBusy=false;}
+    },1200);
+  };
+  window.__hydrateCloudWorkspace=async function(user){
+    if(!sbClient || !user || window.__hesabiMode==='demo') return;
+    try{
+      const {data,error}=await sbClient.from('workspace_data').select('payload').eq('user_id',user.id).maybeSingle();
+      if(!error && data?.payload){ db=data.payload; save(); renderAll(); toast('☁ تمت مزامنة بيانات متجرك'); }
+      else if(!error && !data){ await sbClient.from('workspace_data').insert({user_id:user.id,payload:db,updated_at:new Date().toISOString()}); }
+    }catch(e){ /* local-first fallback */ }
+  };
+
+  window.showPlans=function(){openModal('💳 خطط حسابي Pro',`<div class="grid" style="gap:12px">
+    <div class="card"><span class="pill">مجاني</span><h3>Starter</h3><p class="sub">مبيعات + منتجات + عملاء + تقارير أساسية + PWA + Offline.</p></div>
+    <div class="card" style="border-color:var(--accent)"><span class="demoBadge">PRO</span><h3>Pro — $5 إلى $7 شهريًا</h3><p class="sub">Cloud Sync + Backup + باركود/QR + تقارير متقدمة + WhatsApp + كتالوج إلكتروني.</p></div>
+    <div class="card"><span class="pill">BUSINESS</span><h3>Business — $12 إلى $15 شهريًا</h3><p class="sub">موظفون + صلاحيات + أجهزة متعددة + فروع + سجل عمليات متقدم.</p></div>
+  </div><div class="modal-actions"><button class="btn primary" onclick="closeModal();toast('تواصل مع الدعم لتفعيل الخطة')">طلب التفعيل</button></div>`)};
+
+  window.openMarketPrices=function(){
+    const products=(window.GAZA_CATALOG_2026||[]).slice(0,250);
+    const key='hesabi_market_prices_v2'; const prices=readJSON(key,{});
+    openModal('🇵🇸 أسعار السوق — مرجع قابل للتعديل',`<div class="acctBox">الأسعار هنا <b>مرجعية/يدوية</b> وليست أسعارًا لحظية موثقة. عدّل السعر المحلي ثم اضغط «استخدام السعر» لتطبيقه على الصنف الموجود لديك.</div><div class="toolbar" style="margin-top:12px"><input id="marketQ" class="input search" placeholder="ابحث عن صنف..." oninput="filterMarketPrices()"></div><div id="marketList" class="catalog-list"></div>`);
+    window.__marketProducts=products; window.__marketPrices=prices; renderMarketPrices(products);
+  };
+  window.renderMarketPrices=function(list){
+    const root=document.getElementById('marketList');if(!root)return;
+    root.innerHTML=list.map((p,i)=>{const name=p[0],v=pricesSafe(name);return `<div class="catalog-item"><div style="font-size:20px">🇵🇸</div><div><b>${esc(name)}</b><small>${esc(p[1]||'')} • ${esc(p[3]||'حبة')}</small></div><div style="display:flex;gap:6px;align-items:center"><input id="mp-${i}" class="input" style="width:90px;padding:8px" type="number" step="0.01" value="${v||''}" placeholder="₪"><button class="btn primary" style="min-height:42px" onclick="useMarketPrice(${i})">استخدم</button></div></div>`}).join('')||'<div class="empty">لا توجد نتائج</div>';
+  };
+  function pricesSafe(name){return Number((window.__marketPrices||{})[name]||0)}
+  window.filterMarketPrices=function(){const q=(document.getElementById('marketQ')?.value||'').toLowerCase();renderMarketPrices((window.__marketProducts||[]).filter(p=>p.join(' ').toLowerCase().includes(q)))};
+  window.useMarketPrice=function(i){const p=(window.__marketProducts||[])[i];const input=document.getElementById('mp-'+i);const price=Number(input?.value||0);if(!p||price<=0){toast('أدخل سعرًا صحيحًا');return} window.__marketPrices[p[0]]=price;localStorage.setItem('hesabi_market_prices_v2',JSON.stringify(window.__marketPrices));const existing=db.products.find(x=>x.name===p[0]);if(existing){existing.sell=price;existing.price=price;save();renderAll();toast('تم تحديث سعر '+p[0]);}else toast('تم حفظ السعر المرجعي — أضف الصنف أولاً للمخزون');};
+
+  window.showInstallGuide=function(){
+    openModal('📲 تثبيت حسابي Pro على الهاتف',`<div class="card"><h3>Android / Chrome</h3><p class="sub">افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».</p></div><div class="card"><h3>iPhone / Safari</h3><p class="sub">اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية».</p></div><div class="acctBox">بعد التثبيت سيعمل حسابي Pro كأنه تطبيق مستقل، ويمكن استخدامه Offline ضمن حدود الاشتراك.</div>`);
+  };
+
+  // Re-check demo expiry every minute.
+  setInterval(()=>{if(window.__hesabiMode==='demo'){if(!demoValid()){toast('انتهت تجربة الـDemo');endDemoTrial();}else updateDemoUI()}},60000);
+  window.addEventListener('load',()=>{
+    // Preserve old data on first V2 launch.
+    if(!localStorage.getItem(V2_DB_KEY) && localStorage.getItem(OLD_DB_KEY)) localStorage.setItem(V2_DB_KEY,localStorage.getItem(OLD_DB_KEY));
+    if(demoValid()) setTimeout(()=>startDemoTrial(),150);
+    updateDemoUI();
+  });
+})();
+</script>
+<script id="hesabi-pwa-register">if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
+<footer style="text-align:center;padding:18px;color:var(--mut);font-size:11px">حسابي Pro • Commercial Edition • Single Business License</footer>
 </body>
 </html>
